@@ -205,7 +205,6 @@
         display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
       }
 
-      /* Variante especial de Liquid Glass para los botones interactivos morados */
       .glass-purple {
         background: linear-gradient(135deg, rgba(168, 19, 183, 0.6) 0%, rgba(168, 19, 183, 0.1) 100%);
         backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
@@ -227,7 +226,6 @@
         color: #1a1a1a;
       }
 
-      /* Botón Principal (+) */
       .fab { 
         width: 55px; height: 55px; border-radius: 50%; 
         display: flex; align-items: center; justify-content: center; font-size: 22px; 
@@ -235,11 +233,10 @@
         transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease; 
       }
       
-      /* Hover del Botón Principal (Zoom + Glow Ligero) */
       .fab:hover { 
         transform: scale(1.08); 
         box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4), 
-                    0 0 20px rgba(168, 19, 183, 0.8), /* El Glow Morado */
+                    0 0 20px rgba(168, 19, 183, 0.8),
                     inset 0 1px 1px rgba(255, 255, 255, 0.5), 
                     inset 0 20px 40px rgba(255, 255, 255, 0.1), 
                     inset 0 -1px 2px rgba(0, 0, 0, 0.3);
@@ -247,61 +244,47 @@
       
       body.light-mode .fab:hover {
         box-shadow: 0 10px 25px rgba(168, 19, 183, 0.25), 
-                    0 0 20px rgba(168, 19, 183, 0.6), /* Glow en claro */
+                    0 0 20px rgba(168, 19, 183, 0.6), 
                     inset 0 1px 1px rgba(255, 255, 255, 0.9), 
                     inset 0 20px 40px rgba(255, 255, 255, 0.4), 
                     inset 0 -1px 2px rgba(168, 19, 183, 0.15);
       }
       
       .fab:active { transform: scale(0.95); }
-
-      /* Rotación del '+' al abrir el menú */
       .fab-container.active .fab { transform: rotate(45deg); }
       .fab-container.active .fab:hover { transform: rotate(45deg) scale(1.08); }
 
-      /* Contenedor invisible de los sub-botones (Alineación Perfecta) */
       .fab-menu {
-        position: absolute; bottom: 65px; right: 0; width: 55px; /* Mismo ancho del botón + para alineación vertical exacta */
+        position: absolute; bottom: 65px; right: 0; width: 55px; 
         display: flex; flex-direction: column; align-items: center;
         pointer-events: none; z-index: 201;
       }
       .fab-container.active .fab-menu { pointer-events: auto; }
 
-      /* Esfera Pequeña (Perfil) */
       .fab-item {
         width: 45px; height: 45px; border-radius: 50%;
         display: flex; align-items: center; justify-content: center; font-size: 18px; 
         cursor: pointer; position: absolute; bottom: 0; opacity: 0; 
-        transform: translateY(20px) scale(0.5); /* Inicia oculta abajo y pequeña */
+        transform: translateY(20px) scale(0.5); 
         transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;
       }
       
-      /* Animación de subida al activar */
-      .fab-container.active .fab-item {
-        opacity: 1; transform: translateY(-10px) scale(1); 
-      }
+      .fab-container.active .fab-item { opacity: 1; transform: translateY(-10px) scale(1); }
 
-      /* Etiqueta / Botón "Crear perfil" */
       .fab-label {
-        position: absolute; right: 60px; /* Mayor separación entre burbuja y texto */
-        top: 50%; transform: translateY(-50%) translateX(20px);
+        position: absolute; right: 60px; top: 50%; transform: translateY(-50%) translateX(20px);
         padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; 
         white-space: nowrap; opacity: 0; pointer-events: none; 
-        /* Al contraer, desaparece de inmediato (0s de retraso) */
         transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) 0s, opacity 0.2s ease 0s;
       }
       
-      /* Animación de aparición (deslizamiento a la izquierda) */
       .fab-container.active .fab-label {
         opacity: 1; transform: translateY(-50%) translateX(0); pointer-events: auto; cursor: pointer;
-        /* Retraso de 0.3s para que espere a que la esfera suba primero */
         transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s, opacity 0.3s ease 0.3s;
       }
 
-      /* Hover de los mini botones */
       .fab-item:hover, .fab-label:hover {
-        box-shadow: 0 5px 15px rgba(168, 19, 183, 0.6), 
-                    inset 0 1px 1px rgba(255, 255, 255, 0.5);
+        box-shadow: 0 5px 15px rgba(168, 19, 183, 0.6), inset 0 1px 1px rgba(255, 255, 255, 0.5);
       }
 
       /* ========================================================= */
@@ -309,18 +292,15 @@
       /* ========================================================= */
       .modal-overlay {
         position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-        background: rgba(0, 0, 0, 0.5); /* Fondo base oscurecido */
+        background: rgba(0, 0, 0, 0.5); 
         backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
         z-index: 1000;
         display: none; align-items: center; justify-content: center;
         opacity: 0; transition: opacity 0.3s ease;
       }
-      .modal-overlay.active {
-        opacity: 1;
-      }
+      .modal-overlay.active { opacity: 1; }
       
       .modal-glass {
-        /* Liquid Glass con tinte oscuro sin importar si es modo claro u oscuro */
         background: linear-gradient(135deg, rgba(20, 20, 20, 0.85) 0%, rgba(20, 20, 20, 0.4) 100%);
         backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
         border: 1px solid rgba(255, 255, 255, 0.15);
@@ -331,14 +311,12 @@
                     inset 0 -1px 2px rgba(0, 0, 0, 0.6);
         width: 90%; max-width: 420px;
         padding: 30px;
-        color: white; /* El texto siempre debe ser blanco por el fondo oscuro */
+        color: white; 
         transform: translateY(30px) scale(0.95);
         transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
       }
       
-      .modal-overlay.active .modal-glass {
-        transform: translateY(0) scale(1);
-      }
+      .modal-overlay.active .modal-glass { transform: translateY(0) scale(1); }
 
       .modal-input {
         width: 100%; padding: 12px 15px; margin: 8px 0 20px;
@@ -346,10 +324,48 @@
         background: rgba(0, 0, 0, 0.3); color: white;
         font-size: 0.95rem; transition: border 0.3s ease, background 0.3s ease;
       }
-      .modal-input:focus { 
-        border: 1px solid var(--accent); background: rgba(0, 0, 0, 0.5); 
-      }
+      .modal-input:focus { border: 1px solid var(--accent); background: rgba(0, 0, 0, 0.5); }
       .modal-input::placeholder { color: rgba(255, 255, 255, 0.4); }
+
+      /* Estilos para la botonera de roles */
+      .role-btn {
+        flex: 1; padding: 10px 5px; font-size: 0.75rem; font-weight: 600;
+        border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.2);
+        background: rgba(0, 0, 0, 0.3); color: rgba(255, 255, 255, 0.7);
+        cursor: pointer; transition: all 0.3s ease;
+      }
+      .role-btn.active {
+        background: linear-gradient(135deg, var(--accent) 0%, #6c5ce7 100%);
+        color: white; border-color: rgba(255, 255, 255, 0.5);
+        box-shadow: 0 4px 15px rgba(168, 19, 183, 0.4);
+      }
+
+      /* Estilos contenedor de contraseña y botón mágico */
+      .pwd-container { position: relative; width: 100%; margin: 8px 0 20px; }
+      .pwd-input { width: 100%; padding: 12px 45px 12px 15px; margin: 0; }
+      
+      .gen-pwd-btn {
+        position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+        background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 8px; width: 32px; height: 32px; color: white;
+        cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center;
+      }
+      .gen-pwd-btn:hover { background: rgba(255, 255, 255, 0.25); }
+
+      /* Tooltip Premium */
+      .tooltip-container { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); }
+      .tooltip-text {
+        visibility: hidden; background-color: rgba(0,0,0,0.9); color: #fff;
+        text-align: center; border-radius: 8px; padding: 6px 12px; font-size: 0.75rem;
+        position: absolute; z-index: 10; bottom: 130%; left: 50%; transform: translateX(-50%);
+        opacity: 0; transition: opacity 0.3s, bottom 0.3s; white-space: nowrap; 
+        border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 4px 15px rgba(0,0,0,0.5); pointer-events: none;
+      }
+      .tooltip-text::after {
+        content: ""; position: absolute; top: 100%; left: 50%; margin-left: -5px;
+        border-width: 5px; border-style: solid; border-color: rgba(0,0,0,0.9) transparent transparent transparent;
+      }
+      .tooltip-container:hover .tooltip-text { visibility: visible; opacity: 1; bottom: 140%; }
 
       /* --- MÓVIL RESPONSIVE --- */
       @media (max-width: 768px) {
@@ -375,7 +391,6 @@
         .glass { backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
         .bottom-actions { opacity: 1; visibility: visible; transition: none; width: auto; margin: 0; gap: 15px; }
         
-        /* Ajuste del FAB en móviles (para no chocar con la barra inferior) */
         .fab-container { bottom: 90px; right: 20px; }
       }
     </style>
@@ -570,18 +585,47 @@
         </div>
         
         <!-- Cuerpo del Formulario -->
+        
+        <!-- 1. Botonera de Rol -->
+        <div style="margin-bottom: 15px;">
+          <label style="font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-left: 5px; font-weight: 600;">Rol del Perfil</label>
+          <div style="display: flex; gap: 8px; margin-top: 8px;">
+            <button class="role-btn active" onclick="seleccionarRol(this)">Colaborador</button>
+            <button class="role-btn" onclick="seleccionarRol(this)">Integrante</button>
+            <button class="role-btn" onclick="seleccionarRol(this)">Arrendatario</button>
+          </div>
+        </div>
+
+        <!-- 2. Nombre del Perfil -->
         <div>
-          <label style="font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-left: 5px; font-weight: 600;">Nombre del Familiar</label>
-          <input type="text" placeholder="Ej. Carlos Bautista" class="modal-input">
+          <label style="font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-left: 5px; font-weight: 600;">Nombre del Perfil</label>
+          <input type="text" id="input-nombre-perfil" placeholder="Ej. Carlos Bautista" class="modal-input" oninput="capitalizarNombres(this)">
         </div>
         
+        <!-- 3. Cuota Asignada -->
         <div>
           <label style="font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-left: 5px; font-weight: 600;">Cuota Mensual Asignada</label>
           <input type="number" placeholder="$ 0" class="modal-input">
         </div>
         
+        <!-- 4. Contraseña Mágica -->
+        <div>
+          <label style="font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-left: 5px; font-weight: 600;">Contraseña de Acceso</label>
+          <div class="pwd-container">
+            <!-- Type text para que Yenny pueda ver la contraseña que le asigna a sus familiares -->
+            <input type="text" id="input-password-perfil" placeholder="Asigna una contraseña" class="modal-input pwd-input">
+            
+            <div class="tooltip-container">
+              <button class="gen-pwd-btn" onclick="generarPassword()">
+                <i class="fas fa-magic"></i>
+              </button>
+              <span class="tooltip-text">Generar contraseña genérica</span>
+            </div>
+          </div>
+        </div>
+        
         <!-- Botón de Guardado -->
-        <button class="btn-action" style="margin-top: 10px; background: linear-gradient(45deg, var(--accent), #6c5ce7); border-color: rgba(255,255,255,0.3); font-weight: 600; padding: 12px; border-radius: 12px; font-size: 1rem; box-shadow: 0 4px 15px rgba(168, 19, 183, 0.4);" onclick="cerrarModalPerfil()">
+        <button class="btn-action" style="margin-top: 5px; background: linear-gradient(45deg, var(--accent), #6c5ce7); border-color: rgba(255,255,255,0.3); font-weight: 600; padding: 12px; border-radius: 12px; font-size: 1rem; box-shadow: 0 4px 15px rgba(168, 19, 183, 0.4);" onclick="cerrarModalPerfil()">
           Guardar Perfil
         </button>
 
@@ -639,7 +683,6 @@
           submenu.style.display = 'none';
         }
         
-        // Cerrar el FAB si está abierto al cambiar de vista
         document.getElementById('fab-container').classList.remove('active');
       }
 
@@ -672,20 +715,44 @@
 
       // Control del Modal de Perfil
       function abrirModalPerfil() {
-        // Cierra el menú flotante al abrir el modal
         document.getElementById('fab-container').classList.remove('active');
-        
         const modal = document.getElementById('modal-perfil');
         modal.style.display = 'flex'; 
-        // Pequeño retraso para que la animación CSS tenga efecto después del 'display: flex'
         setTimeout(() => modal.classList.add('active'), 10);
       }
 
       function cerrarModalPerfil() {
         const modal = document.getElementById('modal-perfil');
         modal.classList.remove('active');
-        // Espera a que termine la animación de opacidad antes de quitarlo del layout
         setTimeout(() => modal.style.display = 'none', 300);
+      }
+
+      // --- Nuevas funciones de Perfiles ---
+      
+      // 1. Selector de botonera de Rol
+      function seleccionarRol(btn) {
+        const botones = btn.parentElement.querySelectorAll('.role-btn');
+        botones.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+      }
+
+      // 2. Auto-capitalizar Iniciales
+      function capitalizarNombres(input) {
+        let palabras = input.value.split(' ');
+        for (let i = 0; i < palabras.length; i++) {
+          if (palabras[i].length > 0) {
+            // Convierte primera letra en mayúscula y el resto en minúscula
+            palabras[i] = palabras[i].charAt(0).toUpperCase() + palabras[i].substring(1).toLowerCase();
+          }
+        }
+        input.value = palabras.join(' ');
+      }
+
+      // 3. Generador de Contraseña Mágica
+      function generarPassword() {
+        // Genera un número de 4 dígitos entre 1000 y 9999
+        const randomNum = Math.floor(1000 + Math.random() * 9000);
+        document.getElementById('input-password-perfil').value = "Familia" + randomNum;
       }
     </script>
   </body>
