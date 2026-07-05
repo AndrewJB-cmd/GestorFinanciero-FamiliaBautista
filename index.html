@@ -343,30 +343,25 @@
       /* ---------------------------------------------------- */
       /* CONTENEDOR DE CONTRASEÑA E ICONOS DE COPIAR / MAGIA  */
       /* ---------------------------------------------------- */
-      .pwd-container { position: relative; width: 100%; margin: 8px 0 20px; display: flex; align-items: center; }
+      .pwd-container { position: relative; width: 100%; margin: 8px 0 10px; display: flex; align-items: center; }
       
-      /* Espacio suficiente en el input para que no se pisen las letras con los íconos (80px de padding derecho) */
       .pwd-input { width: 100%; padding: 12px 85px 12px 15px; margin: 0; box-sizing: border-box; }
       
-      /* Contenedor Flex para alinear los dos iconos a la derecha de forma perfecta */
       .pwd-actions {
         position: absolute; right: 6px; top: 6px; bottom: 6px;
         display: flex; gap: 4px; align-items: center; justify-content: flex-end;
       }
       
-      /* Wrapper que obliga a ambos iconos a ser un cuadrado perfecto basado en su altura disponible */
       .action-wrapper { height: 100%; aspect-ratio: 1; position: relative; }
 
-      /* Icono de Copiar (Sin fondo de botón, puro ícono interactivo) */
       .copy-icon-btn {
         width: 100%; height: 100%; 
         display: flex; align-items: center; justify-content: center;
         color: rgba(255,255,255,0.7); cursor: pointer; transition: color 0.3s; font-size: 1.1rem;
       }
       .copy-icon-btn:hover { color: white; }
-      .copy-icon-btn.copied { color: var(--success); } /* Destello verde */
+      .copy-icon-btn.copied { color: var(--success); }
       
-      /* Botón de la varita mágica */
       .gen-pwd-btn {
         width: 100%; height: 100%;
         background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2);
@@ -387,6 +382,54 @@
       .tooltip-text::after {
         content: ""; position: absolute; top: 100%; left: 50%; margin-left: -5px;
         border-width: 5px; border-style: solid; border-color: rgba(0,0,0,0.9) transparent transparent transparent;
+      }
+
+      /* ---------------------------------------------------- */
+      /* INDICADORES DE SEGURIDAD (CHECKLIST)                 */
+      /* ---------------------------------------------------- */
+      .pwd-rules {
+        display: flex; flex-direction: column; gap: 6px; 
+        margin-bottom: 25px; padding-left: 5px;
+      }
+      .pwd-rule {
+        display: flex; align-items: center; gap: 8px; 
+        color: rgba(255,255,255,0.4); font-size: 0.75rem; 
+        transition: color 0.4s ease;
+      }
+      .rule-circle {
+        width: 14px; height: 14px; min-width: 14px; border-radius: 50%; 
+        border: 1px solid rgba(255,255,255,0.4); 
+        display: flex; align-items: center; justify-content: center; 
+        transition: all 0.4s ease;
+      }
+      .rule-circle i {
+        font-size: 8px; opacity: 0; transform: scale(0.5);
+        transition: opacity 0.4s ease, transform 0.4s ease, color 0.4s ease;
+      }
+      
+      /* Estado Válido de una Regla */
+      .pwd-rule.valid { color: var(--success); }
+      .pwd-rule.valid .rule-circle { border-color: var(--success); background: rgba(46, 204, 113, 0.1); }
+      .pwd-rule.valid .rule-circle i { opacity: 1; transform: scale(1); color: var(--success); }
+
+      /* ---------------------------------------------------- */
+      /* BOTÓN GUARDAR PERFIL (ESTADOS INACTIVO / ACTIVO)     */
+      /* ---------------------------------------------------- */
+      .btn-save-profile {
+        width: 100%; padding: 12px; margin-top: 5px;
+        background: transparent; 
+        border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; 
+        color: rgba(255,255,255,0.4); font-size: 1rem; font-weight: 600; 
+        box-shadow: none; cursor: not-allowed;
+        transition: all 0.4s ease;
+      }
+      
+      .btn-save-profile.active {
+        background: linear-gradient(45deg, var(--accent), #6c5ce7); 
+        border-color: rgba(255,255,255,0.3); 
+        color: white; 
+        box-shadow: 0 4px 15px rgba(168, 19, 183, 0.4); 
+        cursor: pointer;
       }
 
       /* --- MÓVIL RESPONSIVE --- */
@@ -621,17 +664,17 @@
         <!-- 2. Nombre del Perfil -->
         <div>
           <label style="font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-left: 5px; font-weight: 600;">Nombre del Perfil</label>
-          <input type="text" id="input-nombre-perfil" placeholder="" class="modal-input" oninput="capitalizarNombres(this)">
+          <input type="text" id="input-nombre-perfil" placeholder="" class="modal-input" oninput="capitalizarNombres(this); validarFormularioPerfil();">
         </div>
         
         <!-- 3. Contraseña Mágica y Segura (Con iconos combinados) -->
         <div>
           <label style="font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-left: 5px; font-weight: 600;">Contraseña de Acceso</label>
           <div class="pwd-container">
-            <input type="text" id="input-password-perfil" placeholder="Escribe o genera una clave" class="modal-input pwd-input" oninput="toggleCopyIcon()">
+            <input type="text" id="input-password-perfil" placeholder="Escribe o genera una clave" class="modal-input pwd-input" oninput="validarFormularioPerfil()">
             
             <div class="pwd-actions">
-              <!-- Botón de Copiar (Aparece y parpadea en verde) -->
+              <!-- Botón de Copiar (Aparece condicionado por seguridad) -->
               <div id="wrapper-copy-btn" class="action-wrapper" style="display: none;" onclick="copiarPasswordManual()" title="Copiar al portapapeles">
                 <div id="icono-copiar" class="copy-icon-btn">
                   <i class="fas fa-copy"></i>
@@ -646,12 +689,31 @@
                 <span class="tooltip-text">Generar contraseña genérica</span>
               </div>
             </div>
-
+          </div>
+          
+          <!-- Checklist de Seguridad de Contraseña -->
+          <div class="pwd-rules">
+            <div class="pwd-rule" id="rule-length">
+              <div class="rule-circle"><i class="fas fa-check"></i></div>
+              <span>8 caracteres mínimos</span>
+            </div>
+            <div class="pwd-rule" id="rule-case">
+              <div class="rule-circle"><i class="fas fa-check"></i></div>
+              <span>Una letra mayúscula y una minúscula</span>
+            </div>
+            <div class="pwd-rule" id="rule-num">
+              <div class="rule-circle"><i class="fas fa-check"></i></div>
+              <span>Un número</span>
+            </div>
+            <div class="pwd-rule" id="rule-spec">
+              <div class="rule-circle"><i class="fas fa-check"></i></div>
+              <span>Un carácter especial</span>
+            </div>
           </div>
         </div>
         
-        <!-- Botón de Guardado -->
-        <button class="btn-action" style="margin-top: 5px; background: linear-gradient(45deg, var(--accent), #6c5ce7); border-color: rgba(255,255,255,0.3); font-weight: 600; padding: 12px; border-radius: 12px; font-size: 1rem; box-shadow: 0 4px 15px rgba(168, 19, 183, 0.4);" onclick="cerrarModalPerfil()">
+        <!-- Botón de Guardado (Inicialmente inactivo por CSS) -->
+        <button id="btn-guardar-perfil" class="btn-save-profile" onclick="guardarPerfilSiValido()">
           Guardar Perfil
         </button>
 
@@ -743,10 +805,10 @@
       function abrirModalPerfil() {
         document.getElementById('fab-container').classList.remove('active');
         
-        // Limpiamos los campos al abrir la ventana nueva para una experiencia pulida
+        // Limpiamos los campos y validaciones al abrir la ventana
         document.getElementById('input-nombre-perfil').value = '';
         document.getElementById('input-password-perfil').value = '';
-        toggleCopyIcon(); // Aseguramos que el ícono de copiar nazca oculto
+        validarFormularioPerfil(); // Fuerza la validación inicial (apaga todo)
         
         const modal = document.getElementById('modal-perfil');
         modal.style.display = 'flex'; 
@@ -757,6 +819,15 @@
         const modal = document.getElementById('modal-perfil');
         modal.classList.remove('active');
         setTimeout(() => modal.style.display = 'none', 300);
+      }
+
+      function guardarPerfilSiValido() {
+        const btn = document.getElementById('btn-guardar-perfil');
+        // Si el botón tiene la clase activa, permitimos el guardado
+        if (btn.classList.contains('active')) {
+          cerrarModalPerfil();
+          alert('¡Perfil configurado con éxito!');
+        }
       }
 
       // --- Nuevas funciones de Perfiles ---
@@ -780,20 +851,57 @@
         input.value = palabras.join(' ');
       }
 
-      // 3. Control visual del ícono de copiar
-      function toggleCopyIcon() {
-        const pwdInput = document.getElementById('input-password-perfil');
+      // 3. Validación Múltiple de Contraseña y Formulario (Regex en Tiempo Real)
+      function validarFormularioPerfil() {
+        const pwd = document.getElementById('input-password-perfil').value;
+        const nombre = document.getElementById('input-nombre-perfil').value;
+
+        // Reglas de Expresiones Regulares (Regex)
+        const rLength = pwd.length >= 8;
+        const rCase = /[a-z]/.test(pwd) && /[A-Z]/.test(pwd);
+        const rNum = /\d/.test(pwd);
+        // Verifica si hay al menos un caracter que no sea letra o número
+        const rSpec = /[^a-zA-Z0-9]/.test(pwd);
+
+        // Actualizamos los círculos y textos (Feedback visual)
+        toggleRule('rule-length', rLength);
+        toggleRule('rule-case', rCase);
+        toggleRule('rule-num', rNum);
+        toggleRule('rule-spec', rSpec);
+
+        // Evaluamos si el formulario completo es 100% válido
+        const pwdValid = rLength && rCase && rNum && rSpec;
+        const nombreValid = nombre.trim().length > 0;
+
+        // Control del botón de Copiar (Solo aparece si es 100% segura)
         const copyBtn = document.getElementById('wrapper-copy-btn');
-        if (pwdInput.value.length > 0) {
+        if (pwdValid) {
           copyBtn.style.display = 'block';
         } else {
           copyBtn.style.display = 'none';
+        }
+
+        // Control de activación del botón Guardar Perfil
+        const saveBtn = document.getElementById('btn-guardar-perfil');
+        if (pwdValid && nombreValid) {
+          saveBtn.classList.add('active');
+        } else {
+          saveBtn.classList.remove('active');
+        }
+      }
+
+      // Subfunción para pintar verde o gris cada regla específica
+      function toggleRule(id, isValid) {
+        const el = document.getElementById(id);
+        if (isValid) {
+          el.classList.add('valid');
+        } else {
+          el.classList.remove('valid');
         }
       }
 
       // 4. Copiar al Portapapeles (Robusto para PC y Celulares)
       function copiarAlPortapapeles(texto) {
-        // Truco con un input temporal para garantizar compatibilidad con navegadores móviles e iframes
         const tempInput = document.createElement("textarea");
         tempInput.value = texto;
         tempInput.style.position = "fixed"; 
@@ -848,14 +956,16 @@
           pwd += todos[Math.floor(Math.random() * todos.length)];
         }
         
-        // Barajar aleatoriamente los caracteres generados para mayor seguridad
+        // Barajar aleatoriamente los caracteres generados
         pwd = pwd.split('').sort(() => 0.5 - Math.random()).join('');
         
         // Insertar en el input
         document.getElementById('input-password-perfil').value = pwd;
         
-        // Hacemos que aparezca el ícono de copiar, lo copiamos a la memoria del dispositivo y destella
-        toggleCopyIcon();
+        // Disparamos la validación para que evalúe y encienda todos los checks y el botón guardar
+        validarFormularioPerfil();
+        
+        // Copiamos automáticamente y hacemos el destello
         copiarAlPortapapeles(pwd);
       }
     </script>
