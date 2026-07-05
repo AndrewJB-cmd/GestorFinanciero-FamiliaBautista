@@ -25,12 +25,13 @@
         --danger: #ff7675;
         --warning: #ffeaa7;
         
-        --bg-main: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+        /* Fondo base inmutable */
+        --bg-main: #75009E;
       }
 
       /* --- PALETA LIGHT MODE --- */
       body.light-mode {
-        --glass-bg: rgba(255, 255, 255, 0.7);
+        --glass-bg: rgba(255, 255, 255, 0.85); /* Blanco translúcido */
         --glass-border: rgba(255, 255, 255, 0.5);
         --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
         
@@ -41,8 +42,6 @@
         --success: #27ae60;
         --danger: #e74c3c;
         --warning: #f39c12;
-        
-        --bg-main: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
       }
 
       * { box-sizing: border-box; margin: 0; padding: 0; outline: none; -webkit-tap-highlight-color: transparent; }
@@ -56,7 +55,7 @@
         overflow: hidden;
         display: flex; 
         flex-direction: row;
-        transition: background 0.4s ease, color 0.4s ease;
+        transition: color 0.4s ease;
       }
 
       /* --- SIDEBAR & ANIMACIÓN PERFECTA --- */
@@ -145,7 +144,7 @@
         color: var(--text-dark); background: rgba(128, 128, 128, 0.1);
       }
 
-      /* --- BOTTOM NAV (Switch & Refresh) con Retraso --- */
+      /* --- BOTTOM NAV (Switch & Refresh) con Retraso Ajustado --- */
       .bottom-actions {
         width: 250px; /* Ancho fijo para que no se aprieten */
         display: flex; flex-direction: row; align-items: center; justify-content: center;
@@ -156,8 +155,8 @@
       
       .sidebar:hover .bottom-actions {
         opacity: 1; visibility: visible;
-        /* Magia aquí: Espera 1.1s exactos (0.3s expansión + 0.8s pausa) */
-        transition: opacity 0.4s 1.1s, visibility 0s 1.1s; 
+        /* Reducido a 0.3s (tiempo exacto de expansión) */
+        transition: opacity 0.4s 0.3s, visibility 0s 0.3s; 
       }
 
       .theme-switch {
@@ -211,7 +210,7 @@
       }
 
       /* --- COMPONENTES --- */
-      .date-badge { background: rgba(128,128,128,0.2); padding: 5px 15px; border-radius: 20px; font-size: 0.85rem; border: 1px solid var(--glass-border); color: var(--text-dark);}
+      .date-badge { background: rgba(128,128,128,0.2); padding: 6px 16px; border-radius: 20px; font-size: 0.9rem; border: 1px solid var(--glass-border); color: var(--text-dark); font-weight: 500;}
       .kpi-card { padding: 20px; display: flex; flex-direction: column; justify-content: space-between; height: 130px; }
       .kpi-title { font-size: 0.85rem; color: var(--text-light); display: flex; align-items: center; gap: 8px; }
       .kpi-value { font-size: 1.6rem; font-weight: 700; margin-top: 5px; color: var(--text-dark); }
@@ -323,7 +322,8 @@
             <p style="opacity: 0.8; font-size: 0.9rem;">Balance del Hogar</p>
           </div>
           <div style="text-align: right;">
-            <div class="date-badge glass" id="fecha-hoy">Feb 2026</div>
+            <!-- Badge Fecha y Hora Dinámica -->
+            <div class="date-badge glass" id="fecha-hoy">Cargando fecha...</div>
           </div>
         </div>
 
@@ -418,9 +418,29 @@
 
     <!-- SCRIPTS -->
     <script>
-      window.addEventListener('load', () => {
+      // Lógica de Fecha y Hora Dinámica
+      function actualizarFechaHora() {
         const now = new Date();
-        document.getElementById('fecha-hoy').innerText = now.toLocaleString('es-ES', { month: 'short', year: 'numeric' });
+        const opcionesFecha = { day: '2-digit', month: 'long', year: 'numeric' };
+        const fechaStr = now.toLocaleDateString('es-ES', opcionesFecha);
+        
+        let horas = now.getHours();
+        let minutos = now.getMinutes();
+        const ampm = horas >= 12 ? 'pm' : 'am';
+        
+        horas = horas % 12;
+        horas = horas ? horas : 12; // La hora '0' debe mostrarse como '12'
+        minutos = minutos < 10 ? '0' + minutos : minutos; // Añadir un 0 si los minutos son < 10
+        
+        const fechaHoraFinal = `${fechaStr} | ${horas}:${minutos} ${ampm}`;
+        document.getElementById('fecha-hoy').innerText = fechaHoraFinal;
+      }
+
+      window.addEventListener('load', () => {
+        // Inicializar fecha
+        actualizarFechaHora();
+        // Actualizar el reloj cada 60 segundos
+        setInterval(actualizarFechaHora, 60000);
         
         if(localStorage.getItem('temaFamilia') === 'light') {
           document.body.classList.add('light-mode');
