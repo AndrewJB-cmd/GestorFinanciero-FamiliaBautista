@@ -254,22 +254,23 @@
       .fab-container.active .fab { transform: rotate(45deg); }
       .fab-container.active .fab:hover { transform: rotate(45deg) scale(1.08); }
 
+      /* El menú de sub-botones ahora usa Flexbox (column-reverse) para apilarse limpiamente */
       .fab-menu {
         position: absolute; bottom: 65px; right: 0; width: 55px; 
-        display: flex; flex-direction: column; align-items: center;
-        pointer-events: none; z-index: 201;
+        display: flex; flex-direction: column-reverse; align-items: center; gap: 15px;
+        pointer-events: none; z-index: 201; margin-bottom: 15px;
       }
       .fab-container.active .fab-menu { pointer-events: auto; }
 
       .fab-item {
         width: 45px; height: 45px; border-radius: 50%;
         display: flex; align-items: center; justify-content: center; font-size: 18px; 
-        cursor: pointer; position: absolute; bottom: 0; opacity: 0; 
+        cursor: pointer; position: relative; opacity: 0; 
         transform: translateY(20px) scale(0.5); 
         transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;
       }
       
-      .fab-container.active .fab-item { opacity: 1; transform: translateY(-10px) scale(1); }
+      .fab-container.active .fab-item { opacity: 1; transform: translateY(0) scale(1); }
 
       .fab-label {
         position: absolute; right: 60px; top: 50%; transform: translateY(-50%) translateX(20px);
@@ -288,7 +289,7 @@
       }
 
       /* ========================================================= */
-      /* --- MODAL LIQUID GLASS NEGRO (Creación de Perfiles) --- */
+      /* --- MODAL LIQUID GLASS NEGRO (Para Formularios)         --- */
       /* ========================================================= */
       .modal-overlay {
         position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
@@ -309,12 +310,16 @@
                     inset 0 1px 1px rgba(255, 255, 255, 0.3),
                     inset 0 20px 40px rgba(255, 255, 255, 0.05),
                     inset 0 -1px 2px rgba(0, 0, 0, 0.6);
-        width: 90%; max-width: 420px;
+        width: 90%; 
         padding: 30px;
         color: white; 
         transform: translateY(30px) scale(0.95);
         transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
       }
+      
+      /* Clases de ancho para el modal */
+      .modal-md { max-width: 420px; }
+      .modal-lg { max-width: 600px; } /* Más amplio para el contrato */
       
       .modal-overlay.active .modal-glass { transform: translateY(0) scale(1); }
 
@@ -407,13 +412,12 @@
         transition: opacity 0.4s ease, transform 0.4s ease, color 0.4s ease;
       }
       
-      /* Estado Válido de una Regla */
       .pwd-rule.valid { color: var(--success); }
       .pwd-rule.valid .rule-circle { border-color: var(--success); background: rgba(46, 204, 113, 0.1); }
       .pwd-rule.valid .rule-circle i { opacity: 1; transform: scale(1); color: var(--success); }
 
       /* ---------------------------------------------------- */
-      /* BOTÓN GUARDAR PERFIL (ESTADOS INACTIVO / ACTIVO)     */
+      /* BOTÓN GUARDAR (ESTADOS INACTIVO / ACTIVO)            */
       /* ---------------------------------------------------- */
       .btn-save-profile {
         width: 100%; padding: 12px; margin-top: 5px;
@@ -430,6 +434,15 @@
         color: white; 
         box-shadow: 0 4px 15px rgba(168, 19, 183, 0.4); 
         cursor: pointer;
+      }
+
+      /* ---------------------------------------------------- */
+      /* ESTRUCTURA GRID PARA MODALES AMPLIOS                 */
+      /* ---------------------------------------------------- */
+      .form-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
       }
 
       /* --- MÓVIL RESPONSIVE --- */
@@ -620,13 +633,21 @@
     <!-- ============================================== -->
     <div class="fab-container" id="fab-container">
       
+      <!-- Menú Desplegable con flex-direction: column-reverse para apilamiento natural -->
       <div class="fab-menu">
-        <!-- Ítem: Crear Perfil (Alineado y Separado) -->
+        
+        <!-- Ítem 1: Crear Perfil (Aparece abajo, primero en el DOM) -->
         <div class="fab-item glass-purple" onclick="abrirModalPerfil()">
           <i class="fas fa-user"></i>
-          <!-- Label lateral con mayor separación -->
           <div class="fab-label glass-purple" onclick="abrirModalPerfil()">Crear perfil</div>
         </div>
+
+        <!-- Ítem 2: Parametrizar Contrato (Aparece arriba, segundo en el DOM) -->
+        <div class="fab-item glass-purple" onclick="abrirModalContrato()">
+          <i class="fas fa-file-contract"></i>
+          <div class="fab-label glass-purple" onclick="abrirModalContrato()">Parametrizar contrato</div>
+        </div>
+
       </div>
       
       <!-- Botón Principal (+) -->
@@ -640,18 +661,14 @@
     <!-- VENTANA EMERGENTE (MODAL PERFIL NEGRO)         -->
     <!-- ============================================== -->
     <div id="modal-perfil" class="modal-overlay">
-      <div class="modal-glass">
+      <div class="modal-glass modal-md">
         
-        <!-- Encabezado del Modal -->
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
           <h3 style="margin: 0; font-size: 1.3rem; font-weight: 600;">Crear Nuevo Perfil</h3>
           <i class="fas fa-times" style="cursor: pointer; font-size: 1.3rem; opacity: 0.7; transition: 0.2s;" 
              onclick="cerrarModalPerfil()" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'"></i>
         </div>
         
-        <!-- Cuerpo del Formulario -->
-        
-        <!-- 1. Botonera de Rol -->
         <div style="margin-bottom: 20px;">
           <label style="font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-left: 5px; font-weight: 600;">Rol del Perfil</label>
           <div style="display: flex; gap: 8px; margin-top: 8px;">
@@ -661,27 +678,23 @@
           </div>
         </div>
 
-        <!-- 2. Nombre del Perfil -->
         <div>
           <label style="font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-left: 5px; font-weight: 600;">Nombre del Perfil</label>
           <input type="text" id="input-nombre-perfil" placeholder="" class="modal-input" oninput="capitalizarNombres(this); validarFormularioPerfil();">
         </div>
         
-        <!-- 3. Contraseña Mágica y Segura (Con iconos combinados) -->
         <div>
           <label style="font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-left: 5px; font-weight: 600;">Contraseña de Acceso</label>
           <div class="pwd-container">
             <input type="text" id="input-password-perfil" placeholder="Escribe o genera una clave" class="modal-input pwd-input" oninput="validarFormularioPerfil()">
             
             <div class="pwd-actions">
-              <!-- Botón de Copiar (Aparece condicionado por seguridad) -->
               <div id="wrapper-copy-btn" class="action-wrapper" style="display: none;" onclick="copiarPasswordManual()" title="Copiar al portapapeles">
                 <div id="icono-copiar" class="copy-icon-btn">
                   <i class="fas fa-copy"></i>
                 </div>
               </div>
 
-              <!-- Botón de Magia (Varita) -->
               <div class="action-wrapper tooltip-container">
                 <button class="gen-pwd-btn" onclick="generarPassword()">
                   <i class="fas fa-magic"></i>
@@ -691,7 +704,6 @@
             </div>
           </div>
           
-          <!-- Checklist de Seguridad de Contraseña -->
           <div class="pwd-rules">
             <div class="pwd-rule" id="rule-length">
               <div class="rule-circle"><i class="fas fa-check"></i></div>
@@ -712,9 +724,59 @@
           </div>
         </div>
         
-        <!-- Botón de Guardado (Inicialmente inactivo por CSS) -->
         <button id="btn-guardar-perfil" class="btn-save-profile" onclick="guardarPerfilSiValido()">
           Guardar Perfil
+        </button>
+
+      </div>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- VENTANA EMERGENTE (MODAL CONTRATO NEGRO - AMPLIO)-->
+    <!-- ============================================== -->
+    <div id="modal-contrato" class="modal-overlay">
+      <div class="modal-glass modal-lg">
+        
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+          <h3 style="margin: 0; font-size: 1.3rem; font-weight: 600;">Parametrizar Contrato</h3>
+          <i class="fas fa-times" style="cursor: pointer; font-size: 1.3rem; opacity: 0.7; transition: 0.2s;" 
+             onclick="cerrarModalContrato()" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'"></i>
+        </div>
+        
+        <!-- Formulario en Grid adaptable -->
+        <div class="form-grid">
+          
+          <!-- Ocupa las dos columnas si hay espacio -->
+          <div style="grid-column: 1 / -1;">
+            <label style="font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-left: 5px; font-weight: 600;">Arrendatario / Inquilino</label>
+            <input type="text" placeholder="Seleccionar perfil existente" class="modal-input">
+          </div>
+          
+          <div>
+            <label style="font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-left: 5px; font-weight: 600;">Canon Base ($)</label>
+            <input type="number" placeholder="$ 0" class="modal-input">
+          </div>
+          
+          <div>
+            <label style="font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-left: 5px; font-weight: 600;">Día de Corte/Pago</label>
+            <input type="number" placeholder="Ej: 5" min="1" max="31" class="modal-input">
+          </div>
+          
+          <div>
+            <label style="font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-left: 5px; font-weight: 600;">Fecha de Inicio</label>
+            <input type="date" class="modal-input" style="color: rgba(255,255,255,0.7);">
+          </div>
+          
+          <div>
+            <label style="font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-left: 5px; font-weight: 600;">Fecha de Vencimiento</label>
+            <input type="date" class="modal-input" style="color: rgba(255,255,255,0.7);">
+          </div>
+
+        </div>
+        
+        <!-- Botón estático por ahora para contratos -->
+        <button class="btn-save-profile active" style="margin-top: 15px;" onclick="cerrarModalContrato()">
+          Guardar Contrato
         </button>
 
       </div>
@@ -801,14 +863,14 @@
         fabContainer.classList.toggle('active');
       }
 
-      // Control del Modal de Perfil
+      // --- Modales y Gestión de Ventanas ---
+
       function abrirModalPerfil() {
         document.getElementById('fab-container').classList.remove('active');
         
-        // Limpiamos los campos y validaciones al abrir la ventana
         document.getElementById('input-nombre-perfil').value = '';
         document.getElementById('input-password-perfil').value = '';
-        validarFormularioPerfil(); // Fuerza la validación inicial (apaga todo)
+        validarFormularioPerfil(); 
         
         const modal = document.getElementById('modal-perfil');
         modal.style.display = 'flex'; 
@@ -821,59 +883,62 @@
         setTimeout(() => modal.style.display = 'none', 300);
       }
 
+      // Funciones del Modal Contrato
+      function abrirModalContrato() {
+        document.getElementById('fab-container').classList.remove('active');
+        
+        const modal = document.getElementById('modal-contrato');
+        modal.style.display = 'flex'; 
+        setTimeout(() => modal.classList.add('active'), 10);
+      }
+
+      function cerrarModalContrato() {
+        const modal = document.getElementById('modal-contrato');
+        modal.classList.remove('active');
+        setTimeout(() => modal.style.display = 'none', 300);
+      }
+
       function guardarPerfilSiValido() {
         const btn = document.getElementById('btn-guardar-perfil');
-        // Si el botón tiene la clase activa, permitimos el guardado
         if (btn.classList.contains('active')) {
           cerrarModalPerfil();
           alert('¡Perfil configurado con éxito!');
         }
       }
-
-      // --- Nuevas funciones de Perfiles ---
       
-      // 1. Selector de botonera de Rol
       function seleccionarRol(btn) {
         const botones = btn.parentElement.querySelectorAll('.role-btn');
         botones.forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
       }
 
-      // 2. Auto-capitalizar Iniciales
       function capitalizarNombres(input) {
         let palabras = input.value.split(' ');
         for (let i = 0; i < palabras.length; i++) {
           if (palabras[i].length > 0) {
-            // Convierte primera letra en mayúscula y el resto en minúscula
             palabras[i] = palabras[i].charAt(0).toUpperCase() + palabras[i].substring(1).toLowerCase();
           }
         }
         input.value = palabras.join(' ');
       }
 
-      // 3. Validación Múltiple de Contraseña y Formulario (Regex en Tiempo Real)
       function validarFormularioPerfil() {
         const pwd = document.getElementById('input-password-perfil').value;
         const nombre = document.getElementById('input-nombre-perfil').value;
 
-        // Reglas de Expresiones Regulares (Regex)
         const rLength = pwd.length >= 8;
         const rCase = /[a-z]/.test(pwd) && /[A-Z]/.test(pwd);
         const rNum = /\d/.test(pwd);
-        // Verifica si hay al menos un caracter que no sea letra o número
         const rSpec = /[^a-zA-Z0-9]/.test(pwd);
 
-        // Actualizamos los círculos y textos (Feedback visual)
         toggleRule('rule-length', rLength);
         toggleRule('rule-case', rCase);
         toggleRule('rule-num', rNum);
         toggleRule('rule-spec', rSpec);
 
-        // Evaluamos si el formulario completo es 100% válido
         const pwdValid = rLength && rCase && rNum && rSpec;
         const nombreValid = nombre.trim().length > 0;
 
-        // Control del botón de Copiar (Solo aparece si es 100% segura)
         const copyBtn = document.getElementById('wrapper-copy-btn');
         if (pwdValid) {
           copyBtn.style.display = 'block';
@@ -881,7 +946,6 @@
           copyBtn.style.display = 'none';
         }
 
-        // Control de activación del botón Guardar Perfil
         const saveBtn = document.getElementById('btn-guardar-perfil');
         if (pwdValid && nombreValid) {
           saveBtn.classList.add('active');
@@ -890,7 +954,6 @@
         }
       }
 
-      // Subfunción para pintar verde o gris cada regla específica
       function toggleRule(id, isValid) {
         const el = document.getElementById(id);
         if (isValid) {
@@ -900,7 +963,6 @@
         }
       }
 
-      // 4. Copiar al Portapapeles (Robusto para PC y Celulares)
       function copiarAlPortapapeles(texto) {
         const tempInput = document.createElement("textarea");
         tempInput.value = texto;
@@ -919,23 +981,20 @@
         document.body.removeChild(tempInput);
       }
 
-      // 5. Animación de feedback visual (Verde y luego blanco)
       function animarIconoCopia() {
         const icon = document.getElementById('icono-copiar');
-        icon.classList.add('copied'); // Toma el color verde success
+        icon.classList.add('copied'); 
         setTimeout(() => {
-          icon.classList.remove('copied'); // Regresa a blanco luego de 1 seg
+          icon.classList.remove('copied'); 
         }, 1000);
       }
 
-      // 6. Copia manual desde el click en el ícono
       function copiarPasswordManual() {
         const pwdInput = document.getElementById('input-password-perfil');
         if (!pwdInput.value) return;
         copiarAlPortapapeles(pwdInput.value);
       }
 
-      // 7. Generador de Contraseña Mágica Compleja
       function generarPassword() {
         const mayusculas = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         const minusculas = "abcdefghijklmnopqrstuvwxyz";
@@ -945,27 +1004,20 @@
         
         let pwd = "";
         
-        // Garantizar al menos un carácter de cada tipo según tu regla de ciberseguridad
         pwd += mayusculas[Math.floor(Math.random() * mayusculas.length)];
         pwd += minusculas[Math.floor(Math.random() * minusculas.length)];
         pwd += numeros[Math.floor(Math.random() * numeros.length)];
         pwd += especiales[Math.floor(Math.random() * especiales.length)];
         
-        // Rellenar el resto hasta tener 10 caracteres
         for (let i = 0; i < 6; i++) {
           pwd += todos[Math.floor(Math.random() * todos.length)];
         }
         
-        // Barajar aleatoriamente los caracteres generados
         pwd = pwd.split('').sort(() => 0.5 - Math.random()).join('');
         
-        // Insertar en el input
         document.getElementById('input-password-perfil').value = pwd;
         
-        // Disparamos la validación para que evalúe y encienda todos los checks y el botón guardar
         validarFormularioPerfil();
-        
-        // Copiamos automáticamente y hacemos el destello
         copiarAlPortapapeles(pwd);
       }
     </script>
