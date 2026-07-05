@@ -340,20 +340,33 @@
         box-shadow: 0 4px 15px rgba(168, 19, 183, 0.4);
       }
 
-      /* Estilos contenedor de contraseña y botón mágico */
+      /* ---------------------------------------------------- */
+      /* CONTENEDOR DE CONTRASEÑA E ICONOS DE COPIAR / MAGIA  */
+      /* ---------------------------------------------------- */
       .pwd-container { position: relative; width: 100%; margin: 8px 0 20px; display: flex; align-items: center; }
-      .pwd-input { width: 100%; padding: 12px 50px 12px 15px; margin: 0; box-sizing: border-box; }
       
-      /* Botón de la varita mágicamente cuadrado y centrado a 6px por todos sus bordes */
-      .tooltip-container { 
-        position: absolute; 
-        right: 6px; 
-        top: 6px; 
-        bottom: 6px; 
-        height: calc(100% - 12px); /* CORREGIDO: Usamos height en lugar de width para que no se apropie de la pantalla */
-        aspect-ratio: 1; /* Lo obliga a ser un cuadrado perfecto */
+      /* Espacio suficiente en el input para que no se pisen las letras con los íconos (80px de padding derecho) */
+      .pwd-input { width: 100%; padding: 12px 85px 12px 15px; margin: 0; box-sizing: border-box; }
+      
+      /* Contenedor Flex para alinear los dos iconos a la derecha de forma perfecta */
+      .pwd-actions {
+        position: absolute; right: 6px; top: 6px; bottom: 6px;
+        display: flex; gap: 4px; align-items: center; justify-content: flex-end;
       }
       
+      /* Wrapper que obliga a ambos iconos a ser un cuadrado perfecto basado en su altura disponible */
+      .action-wrapper { height: 100%; aspect-ratio: 1; position: relative; }
+
+      /* Icono de Copiar (Sin fondo de botón, puro ícono interactivo) */
+      .copy-icon-btn {
+        width: 100%; height: 100%; 
+        display: flex; align-items: center; justify-content: center;
+        color: rgba(255,255,255,0.7); cursor: pointer; transition: color 0.3s; font-size: 1.1rem;
+      }
+      .copy-icon-btn:hover { color: white; }
+      .copy-icon-btn.copied { color: var(--success); } /* Destello verde */
+      
+      /* Botón de la varita mágica */
       .gen-pwd-btn {
         width: 100%; height: 100%;
         background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2);
@@ -362,7 +375,8 @@
       }
       .gen-pwd-btn:hover { background: rgba(255, 255, 255, 0.25); }
 
-      /* Tooltip Premium */
+      /* Tooltip Premium para la varita */
+      .tooltip-container:hover .tooltip-text { visibility: visible; opacity: 1; bottom: 140%; }
       .tooltip-text {
         visibility: hidden; background-color: rgba(0,0,0,0.9); color: #fff;
         text-align: center; border-radius: 8px; padding: 6px 12px; font-size: 0.75rem;
@@ -374,7 +388,6 @@
         content: ""; position: absolute; top: 100%; left: 50%; margin-left: -5px;
         border-width: 5px; border-style: solid; border-color: rgba(0,0,0,0.9) transparent transparent transparent;
       }
-      .tooltip-container:hover .tooltip-text { visibility: visible; opacity: 1; bottom: 140%; }
 
       /* --- MÓVIL RESPONSIVE --- */
       @media (max-width: 768px) {
@@ -401,7 +414,6 @@
         .bottom-actions { opacity: 1; visibility: visible; transition: none; width: auto; margin: 0; gap: 15px; }
         
         .fab-container { bottom: 90px; right: 20px; }
-        .tooltip-container { width: 34px; height: 34px; } /* Fallback aspecto móvil */
       }
     </style>
   </head>
@@ -606,23 +618,35 @@
           </div>
         </div>
 
-        <!-- 2. Nombre del Perfil (Sin leyenda) -->
+        <!-- 2. Nombre del Perfil -->
         <div>
-          <input type="text" id="input-nombre-perfil" placeholder="Nombre del perfil (Ej. Carlos Bautista)" class="modal-input" oninput="capitalizarNombres(this)">
+          <label style="font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-left: 5px; font-weight: 600;">Nombre del Perfil</label>
+          <input type="text" id="input-nombre-perfil" placeholder="" class="modal-input" oninput="capitalizarNombres(this)">
         </div>
         
-        <!-- 3. Contraseña Mágica y Segura -->
+        <!-- 3. Contraseña Mágica y Segura (Con iconos combinados) -->
         <div>
           <label style="font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-left: 5px; font-weight: 600;">Contraseña de Acceso</label>
           <div class="pwd-container">
-            <input type="text" id="input-password-perfil" placeholder="Asigna una contraseña" class="modal-input pwd-input">
+            <input type="text" id="input-password-perfil" placeholder="Escribe o genera una clave" class="modal-input pwd-input" oninput="toggleCopyIcon()">
             
-            <div class="tooltip-container">
-              <button class="gen-pwd-btn" onclick="generarPassword()">
-                <i class="fas fa-magic"></i>
-              </button>
-              <span class="tooltip-text">Generar contraseña genérica</span>
+            <div class="pwd-actions">
+              <!-- Botón de Copiar (Aparece y parpadea en verde) -->
+              <div id="wrapper-copy-btn" class="action-wrapper" style="display: none;" onclick="copiarPasswordManual()" title="Copiar al portapapeles">
+                <div id="icono-copiar" class="copy-icon-btn">
+                  <i class="fas fa-copy"></i>
+                </div>
+              </div>
+
+              <!-- Botón de Magia (Varita) -->
+              <div class="action-wrapper tooltip-container">
+                <button class="gen-pwd-btn" onclick="generarPassword()">
+                  <i class="fas fa-magic"></i>
+                </button>
+                <span class="tooltip-text">Generar contraseña genérica</span>
+              </div>
             </div>
+
           </div>
         </div>
         
@@ -718,6 +742,12 @@
       // Control del Modal de Perfil
       function abrirModalPerfil() {
         document.getElementById('fab-container').classList.remove('active');
+        
+        // Limpiamos los campos al abrir la ventana nueva para una experiencia pulida
+        document.getElementById('input-nombre-perfil').value = '';
+        document.getElementById('input-password-perfil').value = '';
+        toggleCopyIcon(); // Aseguramos que el ícono de copiar nazca oculto
+        
         const modal = document.getElementById('modal-perfil');
         modal.style.display = 'flex'; 
         setTimeout(() => modal.classList.add('active'), 10);
@@ -750,7 +780,54 @@
         input.value = palabras.join(' ');
       }
 
-      // 3. Generador de Contraseña Mágica Compleja
+      // 3. Control visual del ícono de copiar
+      function toggleCopyIcon() {
+        const pwdInput = document.getElementById('input-password-perfil');
+        const copyBtn = document.getElementById('wrapper-copy-btn');
+        if (pwdInput.value.length > 0) {
+          copyBtn.style.display = 'block';
+        } else {
+          copyBtn.style.display = 'none';
+        }
+      }
+
+      // 4. Copiar al Portapapeles (Robusto para PC y Celulares)
+      function copiarAlPortapapeles(texto) {
+        // Truco con un input temporal para garantizar compatibilidad con navegadores móviles e iframes
+        const tempInput = document.createElement("textarea");
+        tempInput.value = texto;
+        tempInput.style.position = "fixed"; 
+        tempInput.style.opacity = "0"; 
+        document.body.appendChild(tempInput);
+        tempInput.focus();
+        tempInput.select();
+        
+        try {
+          document.execCommand('copy');
+          animarIconoCopia();
+        } catch (err) {
+          console.error('No se pudo copiar: ', err);
+        }
+        document.body.removeChild(tempInput);
+      }
+
+      // 5. Animación de feedback visual (Verde y luego blanco)
+      function animarIconoCopia() {
+        const icon = document.getElementById('icono-copiar');
+        icon.classList.add('copied'); // Toma el color verde success
+        setTimeout(() => {
+          icon.classList.remove('copied'); // Regresa a blanco luego de 1 seg
+        }, 1000);
+      }
+
+      // 6. Copia manual desde el click en el ícono
+      function copiarPasswordManual() {
+        const pwdInput = document.getElementById('input-password-perfil');
+        if (!pwdInput.value) return;
+        copiarAlPortapapeles(pwdInput.value);
+      }
+
+      // 7. Generador de Contraseña Mágica Compleja
       function generarPassword() {
         const mayusculas = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         const minusculas = "abcdefghijklmnopqrstuvwxyz";
@@ -760,7 +837,7 @@
         
         let pwd = "";
         
-        // Garantizar al menos un carácter de cada tipo
+        // Garantizar al menos un carácter de cada tipo según tu regla de ciberseguridad
         pwd += mayusculas[Math.floor(Math.random() * mayusculas.length)];
         pwd += minusculas[Math.floor(Math.random() * minusculas.length)];
         pwd += numeros[Math.floor(Math.random() * numeros.length)];
@@ -776,6 +853,10 @@
         
         // Insertar en el input
         document.getElementById('input-password-perfil').value = pwd;
+        
+        // Hacemos que aparezca el ícono de copiar, lo copiamos a la memoria del dispositivo y destella
+        toggleCopyIcon();
+        copiarAlPortapapeles(pwd);
       }
     </script>
   </body>
