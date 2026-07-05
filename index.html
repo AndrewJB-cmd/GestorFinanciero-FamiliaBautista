@@ -342,7 +342,6 @@
 
       /* Estilos contenedor de contraseña y botón mágico */
       .pwd-container { position: relative; width: 100%; margin: 8px 0 20px; display: flex; align-items: center; }
-      /* Aumenté el padding derecho a 50px para dar espacio cómodo al botón */
       .pwd-input { width: 100%; padding: 12px 50px 12px 15px; margin: 0; box-sizing: border-box; }
       
       /* Botón de la varita mágicamente cuadrado y centrado a 6px por todos sus bordes */
@@ -351,7 +350,7 @@
         right: 6px; 
         top: 6px; 
         bottom: 6px; 
-        width: calc(100% - 12px); /* Se ajusta a la altura disponible (-6px top y -6px bottom) */
+        height: calc(100% - 12px); /* CORREGIDO: Usamos height en lugar de width para que no se apropie de la pantalla */
         aspect-ratio: 1; /* Lo obliga a ser un cuadrado perfecto */
       }
       
