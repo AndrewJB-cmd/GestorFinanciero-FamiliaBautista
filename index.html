@@ -12,11 +12,15 @@
 
     <style>
       :root {
-        /* --- PALETA DARK MODE (Con efecto Liquid Glass) --- */
-        --glass-bg: rgba(20, 20, 20, 0.45); /* Más transparente para ver el fondo */
-        --glass-border: rgba(255, 255, 255, 0.15);
-        --glass-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.6);
-        --glass-highlight: inset 0 1px 1px rgba(255, 255, 255, 0.15); /* Reflejo líquido superior */
+        /* --- PALETA DARK MODE (Liquid Glass Extremo) --- */
+        /* Gradiente ultra transparente para dar volumen 3D al vidrio */
+        --glass-bg: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.01) 100%); 
+        --glass-border: rgba(255, 255, 255, 0.12);
+        --glass-shadow: 0 15px 35px 0 rgba(0, 0, 0, 0.4);
+        /* TRIPLE REFLEJO: Borde superior brillante + Resplandor interno + Sombra base */
+        --glass-highlight: inset 0 1px 1px rgba(255, 255, 255, 0.25), 
+                           inset 0 20px 40px rgba(255, 255, 255, 0.03), 
+                           inset 0 -1px 2px rgba(0, 0, 0, 0.4);
         
         --text-dark: #ecf0f1;
         --text-light: #bdc3c7;
@@ -26,16 +30,19 @@
         --danger: #ff7675;
         --warning: #ffeaa7;
         
-        /* El color de la esquina inferior derecha en Modo Oscuro */
         --bg-secondary: #0a0a0a; 
       }
 
-      /* --- PALETA LIGHT MODE (Con efecto Liquid Glass) --- */
+      /* --- PALETA LIGHT MODE (Liquid Glass Extremo) --- */
       body.light-mode {
-        --glass-bg: rgba(255, 255, 255, 0.65); /* Translúcido y lechoso */
-        --glass-border: rgba(255, 255, 255, 0.4);
-        --glass-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.15);
-        --glass-highlight: inset 0 1px 1px rgba(255, 255, 255, 0.7); /* Reflejo líquido claro */
+        /* Gradiente lechoso muy transparente para dejar pasar el color de fondo */
+        --glass-bg: linear-gradient(135deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.1) 100%);
+        --glass-border: rgba(255, 255, 255, 0.6);
+        --glass-shadow: 0 15px 35px 0 rgba(31, 38, 135, 0.15);
+        /* TRIPLE REFLEJO AGRESIVO: Luz superior fuerte tipo "mojado" */
+        --glass-highlight: inset 0 1px 1px rgba(255, 255, 255, 0.9), 
+                           inset 0 20px 40px rgba(255, 255, 255, 0.5), 
+                           inset 0 -1px 2px rgba(0, 0, 0, 0.05);
         
         --text-dark: #1a1a1a;
         --text-light: #555555;
@@ -45,7 +52,6 @@
         --danger: #e74c3c;
         --warning: #f39c12;
         
-        /* El color de la esquina inferior derecha en Modo Claro */
         --bg-secondary: #f4f4f9; 
       }
 
@@ -53,22 +59,17 @@
 
       body {
         font-family: 'Poppins', sans-serif;
-        
-        /* El lienzo de fondo sólido que transiciona entre negro y blanco */
         background-color: var(--bg-secondary);
-        
         color: var(--text-dark);
         height: 100vh;
         width: 100%;
         overflow: hidden;
         display: flex; 
         flex-direction: row;
-        
-        /* Transición global súper suave para el cambio de tema */
         transition: background-color 0.8s ease, color 0.8s ease;
       }
 
-      /* --- TRUCO MAGIA: EL FONDO MORADO RETRÁCTIL --- */
+      /* --- EL FONDO MORADO RETRÁCTIL --- */
       body::before {
         content: '';
         position: fixed;
@@ -82,27 +83,25 @@
         transition: transform 0.8s cubic-bezier(0.25, 0.8, 0.25, 1);
       }
 
-      /* Al pasar a modo claro, escalamos al 50%. (50% ancho x 50% alto = 25% del área = se retrae un 75%) */
       body.light-mode::before {
         transform: scale(0.5); 
       }
 
-      /* --- SIDEBAR & ANIMACIÓN PERFECTA --- */
+      /* --- SIDEBAR --- */
       .sidebar {
         width: 80px; 
         height: 96vh;
         margin: 2vh 0 2vh 2vh; 
         
-        /* LIQUID GLASS ESTILOS */
         background: var(--glass-bg);
         border: 1px solid var(--glass-border);
         border-radius: 20px;
         box-shadow: var(--glass-shadow), var(--glass-highlight);
-        backdrop-filter: blur(16px);
-        -webkit-backdrop-filter: blur(16px);
+        backdrop-filter: blur(24px); /* Desenfoque más profundo */
+        -webkit-backdrop-filter: blur(24px);
 
         display: flex; flex-direction: column; padding-top: 20px;
-        transition: width 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), background 0.4s ease, box-shadow 0.4s ease;
+        transition: width 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), background 0.4s ease, box-shadow 0.4s ease, border 0.4s ease;
         z-index: 100;
         flex-shrink: 0; 
         overflow: hidden;
@@ -112,7 +111,6 @@
         width: 250px;
       }
       
-      /* Logo anclado */
       .logo { 
         display: flex; align-items: center; width: 100%; 
         margin-bottom: 30px; white-space: nowrap; color: var(--text-dark); 
@@ -127,7 +125,6 @@
       }
       .sidebar:hover .logo-text { opacity: 1; transition-delay: 0.1s; }
 
-      /* Ítems del menú con ancla estricta */
       .menu-item {
         width: calc(100% - 20px);
         margin: 8px 10px;
@@ -156,7 +153,6 @@
         background: rgba(168, 19, 183, 0.2); color: var(--text-dark); font-weight: 600;
       }
 
-      /* --- SUBMENU STYLES --- */
       .submenu-container { width: 100%; display: flex; flex-direction: column; }
       .submenu {
         display: none; flex-direction: column; width: 100%; 
@@ -173,7 +169,6 @@
         color: var(--text-dark); background: rgba(128, 128, 128, 0.1);
       }
 
-      /* --- BOTTOM NAV (Switch & Refresh) --- */
       .bottom-actions {
         width: 250px; 
         display: flex; flex-direction: row; align-items: center; justify-content: center;
@@ -233,8 +228,8 @@
       /* --- LIQUID GLASS EN TARJETAS --- */
       .glass {
         background: var(--glass-bg); 
-        backdrop-filter: blur(16px); 
-        -webkit-backdrop-filter: blur(16px);
+        backdrop-filter: blur(24px); /* Desenfoque incrementado */
+        -webkit-backdrop-filter: blur(24px);
         border: 1px solid var(--glass-border); 
         border-radius: 20px;
         box-shadow: var(--glass-shadow), var(--glass-highlight); 
@@ -278,10 +273,9 @@
         .submenu-item { width: auto; margin: 5px; padding: 10px 15px; }
         .submenu-icon { width: auto; min-width: auto; margin-right: 10px; }
         
-        /* En móvil ajustamos el filtro para rendimiento pero manteniendo el look liquid */
-        .glass { backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+        /* Ajuste para rendimiento en móvil */
+        .glass { backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
         
-        /* En móvil, mostrar siempre iconos inferiores ajustados */
         .bottom-actions { 
           opacity: 1; visibility: visible; transition: none; 
           width: auto; margin: 0; gap: 15px; 
@@ -376,7 +370,8 @@
           <div class="kpi-value">$2,800</div>
         </div>
 
-        <div class="kpi-card glass quarter-width" style="background: rgba(168, 19, 183, 0.15); border-color: var(--accent);">
+        <!-- Tarjeta de Saldo adaptada para el nuevo Liquid Glass -->
+        <div class="kpi-card glass quarter-width" style="border-color: var(--accent); background: linear-gradient(135deg, rgba(168, 19, 183, 0.3) 0%, rgba(168, 19, 183, 0.05) 100%);">
           <div>
             <div class="kpi-title" style="color: var(--text-dark);"><i class="fas fa-wallet" style="color: var(--accent);"></i> Saldo</div>
             <div class="kpi-trend" style="color: var(--text-light)">Disponible</div>
@@ -451,22 +446,14 @@
 
     <!-- SCRIPTS -->
     <script>
-      // Lógica de Fecha y Hora Dinámica (Tiempo Real - Bogotá)
       function actualizarFechaHora() {
         const date = new Date();
-        
-        // Configuración estricta para la zona horaria de Bogotá y formato en español
         const formatter = new Intl.DateTimeFormat('es-CO', {
           timeZone: 'America/Bogota',
-          day: '2-digit',
-          month: 'long',
-          year: 'numeric',
-          hour: 'numeric',
-          minute: '2-digit',
-          hour12: true
+          day: '2-digit', month: 'long', year: 'numeric',
+          hour: 'numeric', minute: '2-digit', hour12: true
         });
 
-        // Extraer las partes formateadas para armar el string exacto que pediste
         const parts = formatter.formatToParts(date);
         let dia = '', mes = '', anio = '', hora = '', minuto = '', ampm = '';
         
@@ -476,19 +463,14 @@
           if (part.type === 'year') anio = part.value;
           if (part.type === 'hour') hora = part.value;
           if (part.type === 'minute') minuto = part.value;
-          if (part.type === 'dayPeriod') ampm = part.value.toLowerCase().replace(/\./g, '').trim(); // Limpia "a. m." a "am"
+          if (part.type === 'dayPeriod') ampm = part.value.toLowerCase().replace(/\./g, '').trim(); 
         }
         
-        // Formato exacto: DD de MMMM de YYYY | HH:MM am/pm
-        const fechaHoraFinal = `${dia} de ${mes} de ${anio} | ${hora}:${minuto} ${ampm}`;
-        document.getElementById('fecha-hoy').innerText = fechaHoraFinal;
+        document.getElementById('fecha-hoy').innerText = `${dia} de ${mes} de ${anio} | ${hora}:${minuto} ${ampm}`;
       }
 
       window.addEventListener('load', () => {
-        // Inicializar fecha de inmediato
         actualizarFechaHora();
-        
-        // Actualizar el reloj cada 1000 milisegundos (1 segundo) para evitar retrasos visuales
         setInterval(actualizarFechaHora, 1000);
         
         if(localStorage.getItem('temaFamilia') === 'light') {
