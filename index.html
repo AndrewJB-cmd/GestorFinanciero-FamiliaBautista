@@ -69,21 +69,24 @@
         transition: background-color 0.8s ease, color 0.8s ease;
       }
 
-      /* --- EL FONDO MORADO RETRÁCTIL --- */
+      /* --- EL FONDO MORADO RETRÁCTIL CORREGIDO --- */
       body::before {
         content: '';
         position: fixed;
         top: 0; 
         left: 0;
-        width: 100vw; 
-        height: 100vh;
-        background-image: linear-gradient(135deg, #75009E 0%, transparent 100%);
+        /* Lienzo gigante (200%) para que los bordes se desvanezcan mucho antes del corte */
+        width: 200vw; 
+        height: 200vh;
+        /* Gradiente radial perfecto: del morado sólido al morado con 0% de opacidad para evitar grises */
+        background-image: radial-gradient(circle at top left, #75009E 0%, rgba(117, 0, 158, 0) 50%);
         z-index: -1;
         transform-origin: top left;
         transition: transform 0.8s cubic-bezier(0.25, 0.8, 0.25, 1);
       }
 
       body.light-mode::before {
+        /* Al retraerse, concentra el morado en la esquina sin mostrar recortes */
         transform: scale(0.5); 
       }
 
