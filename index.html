@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Finanzas Familiares</title>
+    
+    <!-- Librerías Externas -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+      :root {
+        /* --- PALETA DARK MODE --- */
+        --glass-bg: rgba(20, 20, 20, 0.6); 
+        --glass-border: rgba(255, 255, 255, 0.1);
+        --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+        
+        --text-dark: #ecf0f1;
+        --text-light: #bdc3c7;
+        
+        --accent: #A813B7;
+        --success: #2ecc71;
+        --danger: #ff7675;
+        --warning: #ffeaa7;
+      }
+
+      * { box-sizing: border-box; margin: 0; padding: 0; outline: none; -webkit-tap-highlight-color: transparent; }
+
+      body {
+        font-family: 'Poppins', sans-serif;
+        background: linear-gradient(-45deg, #000000, #2a0330, #A813B7, #000000);
+        background-size: 400% 400%;
+        animation: gradientBG 15s ease infinite;
+        color: var(--text-dark);
+        height: 100vh;
+        width: 100%;
+        overflow: hidden;
+        
+        /* RESTAURADO: Flexbox para permitir que el menú empuje el contenido */
+        display: flex; 
+        flex-direction: row;
+      }
+
+      @keyframes gradientBG {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+      }
+
+      /* --- SIDEBAR (DISEÑO ORIGINAL FLOTANTE) --- */
+      .sidebar {
+        /* Dimensiones fijas iniciales */
+        width: 80px; 
+        height: 96vh; /* Flotante, no toca los bordes verticales */
+        margin: 2vh 0 2vh 2vh; /* Margen para efecto flotante */
+        
+        /* Estilo Vidrio Original */
+        background: var(--glass-bg);
+        border: 1px solid var(--glass-border);
+        border-radius: 20px;
+        box-shadow: var(--glass-shadow);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+
+        display: flex; flex-direction: column; align-items: center; padding-top: 20px;
+        
+        /* Animación suave de expansión */
+        transition: width 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        z-index: 100;
+        flex-shrink: 0; /* Evita que se aplaste */
+        overflow: hidden;
+      }
+      
+      .sidebar:hover { 
+        width: 240px; /* Se expande */
+        background: rgba(20, 20, 20, 0.9); /* Más sólido al abrir */
+      }
+      
+      .logo { font-size: 24px; color: white; margin-bottom: 30px; text-shadow: 0 0 10px var(--accent); white-space: nowrap; }
+      
+      .menu-item {
+        color: var(--text-light); text-decoration: none; font-size: 20px;
+        margin: 10px 0; padding: 12px; border-radius: 12px;
+        transition: 0.2s; display: flex; align-items: center;
+        width: 90%; justify-content: center; cursor: pointer;
+        white-space: nowrap;
+      }
+      .sidebar:hover .menu-item { justify-content: flex-start; padding-left: 20px; }
+      
+      .menu-text { 
+        display: inline-block; margin-left: 15px; font-size: 15px; 
+        opacity: 0; transition: opacity 0.2s ease-in;
+      }
+      .sidebar:hover .menu-text { opacity: 1; }
+      
+      .menu-item:hover, .menu-item.active { background: rgba(168, 19, 183, 0.3); color: white; }
+
+      /* --- CONTENIDO PRINCIPAL --- */
+      .main-content {
+        flex: 1; /* Ocupa todo el espacio que sobra a la derecha del menú */
+        height: 100vh;
+        overflow-y: auto;
+        overflow-x: hidden;
+        padding: 2vh; /* Padding igual al margen del sidebar para simetría */
+        width: 100%;
+        display: block; 
+      }
+
+      /* --- GRID DASHBOARD (SOLUCIÓN FLEXIBLE) --- */
+      #view-dashboard {
+        display: grid;
+        gap: 20px;
+        /* Esto asegura 4 columnas, pero si falta espacio, las encoge sin romper el layout */
+        grid-template-columns: repeat(4, minmax(0, 1fr)); 
+        width: 100%;
+        align-content: start;
+      }
+
+      /* Clases de Tamaño */
+      .quarter-width { grid-column: span 1; }
+      .half-width { grid-column: span 2; }
+      .full-width { grid-column: 1 / -1; }
+
+      .section-header {
+        grid-column: 1 / -1;
+        display: flex; justify-content: space-between; align-items: center;
+        color: white; margin-bottom: 10px; width: 100%;
+      }
+
+      /* --- GLASSMORPHISM GENERAL --- */
+      .glass {
+        background: var(--glass-bg);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid var(--glass-border);
+        border-radius: 20px;
+        box-shadow: var(--glass-shadow);
+      }
+
+      /* --- ESTILOS MÓVIL (TABLET VERTICAL Y TELÉFONO) --- */
+      @media (max-width: 768px) {
+        body { flex-direction: column; } /* Menú pasa abajo */
+        
+        .sidebar {
+          width: 100%; height: 70px; /* Barra inferior fija */
+          margin: 0; border-radius: 0; /* Cuadrado abajo */
+          flex-direction: row; justify-content: space-around;
+          padding: 0; position: fixed; bottom: 0;
+          background: rgba(20, 20, 20, 0.95);
+          border: none; border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        .sidebar:hover { width: 100%; background: rgba(20, 20, 20, 0.95); }
+        
+        .main-content {
+          padding: 20px 20px 90px 20px; /* Espacio abajo para el menú */
+        }
+        
+        #view-dashboard {
+          grid-template-columns: 1fr; /* 1 columna en móvil */
+        }
+        
+        .quarter-width, .half-width, .full-width { grid-column: 1 / -1; }
+        
+        .logo, .menu-text { display: none; }
+        .menu-item { width: auto; margin: 0; }
+        
+        /* Optimización vidrio móvil */
+        .glass { backdrop-filter: none; background: rgba(30, 30, 30, 0.95); }
+        
+        .kpi-card { height: 110px; flex-direction: row; align-items: center; }
+        .kpi-value { margin: 0; font-size: 1.4rem; }
+      }
+
+      /* --- COMPONENTES --- */
+      .date-badge { background: rgba(255,255,255,0.1); padding: 5px 15px; border-radius: 20px; font-size: 0.85rem; border: 1px solid rgba(255,255,255,0.2); }
+      
+      .kpi-card {
+        padding: 20px; display: flex; flex-direction: column; justify-content: space-between; height: 130px;
+      }
+      .kpi-title { font-size: 0.85rem; color: var(--text-light); display: flex; align-items: center; gap: 8px; }
+      .kpi-value { font-size: 1.6rem; font-weight: 700; margin-top: 5px; color: white; }
+      .kpi-trend { font-size: 0.75rem; margin-top: 5px; }
+
+      .magic-container { position: relative; display: inline-block; }
+      .btn-magic {
+        background: linear-gradient(45deg, #A813B7, #6c5ce7);
+        color: white; border: none; padding: 8px 15px; border-radius: 50px;
+        font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 8px;
+        box-shadow: 0 4px 15px rgba(168, 19, 183, 0.4); font-size: 0.9rem;
+      }
+      .burbuja-notificacion {
+        position: absolute; bottom: 120%; left: 50%; transform: translateX(-50%);
+        background: #A813B7; color: white; padding: 8px 12px;
+        border-radius: 12px; border-bottom-left-radius: 2px;
+        font-size: 12px; font-weight: bold; white-space: nowrap;
+        box-shadow: 0 4px 15px rgba(168, 19, 183, 0.5);
+        z-index: 150; display: none; animation: flotar 3s ease-in-out infinite; cursor: pointer;
+      }
+      .burbuja-notificacion::after {
+        content: ''; position: absolute; bottom: -6px; left: 10px;
+        border-left: 6px solid transparent; border-right: 6px solid transparent;
+        border-top: 6px solid #A813B7;
+      }
+      @keyframes flotar { 0%, 100% { transform: translateX(-50%) translateY(0px); } 50% { transform: translateX(-50%) translateY(-8px); } }
+
+      .table-card { padding: 15px; overflow-x: auto; }
+      table { width: 100%; border-collapse: collapse; min-width: 100%; }
+      th { text-align: left; color: var(--text-light); font-size: 0.8rem; padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+      td { padding: 12px 0; font-size: 0.9rem; border-bottom: 1px solid rgba(255,255,255,0.05); color: var(--text-dark); }
+
+      .tools-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; }
+      
+      .tool-card {
+        padding: 15px; display: flex; flex-direction: column; align-items: center; text-align: center;
+        transition: transform 0.2s; cursor: pointer;
+      }
+      .tool-card:active { transform: scale(0.98); }
+      .tool-icon {
+        width: 45px; height: 45px; border-radius: 50%; color: white;
+        display: flex; align-items: center; justify-content: center; font-size: 18px; margin-bottom: 10px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      }
+      .tool-input { 
+        width: 100%; padding: 8px; margin: 5px 0; 
+        border: none; border-radius: 8px; font-size: 0.9rem;
+        background: rgba(255, 255, 255, 0.9); color: #333; 
+      }
+      .btn-action { width: 100%; padding: 8px; border-radius: 8px; border: none; color: white; background: #333; cursor: pointer; border: 1px solid rgba(255,255,255,0.2); }
+      
+      .servicios-row { display: flex; gap: 10px; justify-content: space-around; width: 100%; margin-top: 10px; }
+      .srv-item { opacity: 0.4; transition: 0.3s; display: flex; flex-direction: column; align-items: center; color: var(--text-light); }
+      .srv-item.active { opacity: 1; transform: scale(1.1); color: white; }
+      .srv-item.active i { color: var(--success); text-shadow: 0 0 10px var(--success); }
+
+      .progress-container { width: 100%; height: 8px; background: rgba(255,255,255,0.1); border-radius: 10px; margin: 10px 0; overflow: hidden; }
+      .progress-bar { height: 100%; background: linear-gradient(90deg, #A813B7, #6c5ce7); width: 0%; transition: width 1s; }
+      
+      .semaforo { width: 20px; height: 20px; border-radius: 50%; background: #444; display: inline-block; margin-right: 5px; }
+      .semaforo.on { background: var(--success); box-shadow: 0 0 10px var(--success); }
+      .semaforo.warn { background: var(--warning); }
+      .semaforo.danger { background: var(--danger); animation: flotar 1s infinite; }
+
+      .wrapped-overlay {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.95); backdrop-filter: blur(15px);
+        z-index: 500; display: none; align-items: center; justify-content: center;
+      }
+      .story-card {
+        width: 90%; max-width: 380px; height: 70vh;
+        background: linear-gradient(135deg, #2a0330 0%, #A813B7 100%);
+        border-radius: 25px; padding: 30px; text-align: center;
+        display: flex; flex-direction: column; justify-content: center; align-items: center;
+        position: relative; color: white;
+        box-shadow: 0 0 30px rgba(168, 19, 183, 0.4);
+      }
+      .story-emoji { font-size: 60px; margin-bottom: 20px; }
+      .story-title { font-size: 24px; font-weight: 800; margin-bottom: 15px; color: white; text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
+      .story-text { font-size: 16px; font-weight: 500; line-height: 1.5; color: rgba(255,255,255,0.9); }
+      .close-btn { position: absolute; top: 15px; right: 20px; color: white; font-size: 24px; cursor: pointer; }
+
+      .fab {
+        position: fixed; bottom: 25px; right: 25px; width: 55px; height: 55px;
+        background: var(--accent); border-radius: 50%; color: white;
+        display: flex; align-items: center; justify-content: center; font-size: 22px;
+        box-shadow: 0 5px 15px rgba(168, 19, 183, 0.4); cursor: pointer; z-index: 200;
+        transition: transform 0.2s;
+      }
+      .fab:active { transform: scale(0.9); }
+
+      /* --- LOADER --- */
+      #loader-pantalla {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: #111; z-index: 9999;
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        transition: opacity 0.5s;
+      }
+      .spinner {
+        width: 40px; height: 40px; border: 4px solid #333;
+        border-top: 4px solid var(--accent); border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+      @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+  </head>
+  <body>
+
+    <!-- PANTALLA DE CARGA -->
+    <div id="loader-pantalla">
+      <div class="spinner"></div>
+      <p style="margin-top: 15px; color: #888; font-size: 0.9rem;">Recuperando datos...</p>
+    </div>
+
+    <!-- MENÚ LATERAL (DISEÑO FLOTANTE ORIGINAL) -->
+    <nav class="sidebar">
+      <div class="logo"><i class="fas fa-home"></i></div>
+      
+      <div class="menu-item active" onclick="cambiarVista('dashboard', this)">
+        <i class="fas fa-chart-pie"></i>
+        <span class="menu-text">Resumen</span>
+      </div>
+      
+      <div class="menu-item" onclick="cambiarVista('arriendo', this)">
+        <i class="fas fa-key"></i>
+        <span class="menu-text">Arrendamiento</span>
+      </div>
+      
+      <div class="menu-item" onclick="cambiarVista('herramientas', this)">
+        <i class="fas fa-tools"></i>
+        <span class="menu-text">Herramientas</span>
+      </div>
+
+      <div style="flex:1"></div>
+
+      <div class="menu-item" onclick="window.location.reload()">
+        <i class="fas fa-sync-alt"></i>
+        <span class="menu-text">Actualizar</span>
+      </div>
+    </nav>
+
+    <!-- ÁREA PRINCIPAL -->
+    <main class="main-content">
+      
+      <!-- ================= VISTA DASHBOARD ================= -->
+      <div id="view-dashboard">
+        
+        <div class="section-header">
+          <div>
+            <h2 style="font-size: 1.5rem;">Hola, Yenny 👋</h2>
+            <p style="opacity: 0.8; font-size: 0.9rem;">Balance del Hogar</p>
+          </div>
+          <div style="text-align: right;">
+            <div class="date-badge glass" id="fecha-hoy">Feb 2026</div>
+            
+            <div class="magic-container" style="margin-top: 10px;">
+              <div id="notificacionYenny" class="burbuja-notificacion" onclick="abrirWrapped()">
+                ¡Yenny! Tu informe mensual está listo 🎁
+              </div>
+              <button class="btn-magic" onclick="abrirWrapped()">
+                <i class="fas fa-sparkles"></i> IA Report
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="kpi-card glass quarter-width">
+          <div>
+            <div class="kpi-title"><i class="fas fa-arrow-down" style="color: var(--danger)"></i> Gastos</div>
+            <div class="kpi-trend" style="color: var(--danger)">+5% vs mes ant.</div>
+          </div>
+          <div class="kpi-value">$1,250</div>
+        </div>
+
+        <div class="kpi-card glass quarter-width">
+          <div>
+            <div class="kpi-title"><i class="fas fa-arrow-up" style="color: var(--success)"></i> Ingresos</div>
+            <div class="kpi-trend" style="color: var(--success)">Estable</div>
+          </div>
+          <div class="kpi-value">$2,800</div>
+        </div>
+
+        <div class="kpi-card glass quarter-width" style="background: rgba(168, 19, 183, 0.2);">
+          <div>
+            <div class="kpi-title" style="color:white"><i class="fas fa-wallet"></i> Saldo</div>
+            <div class="kpi-trend" style="color: rgba(255,255,255,0.7)">Disponible</div>
+          </div>
+          <div class="kpi-value" style="color: white">$1,550</div>
+        </div>
+
+        <div class="kpi-card glass quarter-width" style="justify-content: center; align-items: center; cursor: pointer;" onclick="alert('Copia de seguridad guardada en Drive ✅')">
+          <i class="fas fa-cloud-upload-alt" style="font-size: 1.8rem; color: var(--accent);"></i>
+          <div style="font-size: 0.8rem; margin-top: 5px; font-weight: 600; color: var(--text-light);">Respaldar Ahora</div>
+        </div>
+
+        <div class="glass half-width" style="padding: 20px; min-height: 250px;">
+          <h3 style="font-size: 1rem; margin-bottom: 15px; color:white;">Gastos por Categoría</h3>
+          <div style="height: 200px; position: relative;">
+            <canvas id="miGrafica"></canvas>
+          </div>
+        </div>
+
+        <div class="glass half-width table-card">
+          <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+            <h3 style="font-size: 1rem; color:white;">Últimos Movimientos</h3>
+            <span style="font-size: 0.8rem; color: var(--accent); cursor: pointer;">Ver todo</span>
+          </div>
+          <table>
+            <thead><tr><th>Fecha</th><th>Concepto</th><th>Monto</th></tr></thead>
+            <tbody>
+              <tr><td>03 Feb</td><td>Pago Luz</td><td style="color:var(--danger)">-$120</td></tr>
+              <tr><td>02 Feb</td><td>Arriendo Apto</td><td style="color:var(--success)">+$800</td></tr>
+              <tr><td>01 Feb</td><td>Mercado</td><td style="color:var(--danger)">-$450</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ================= VISTA ARRENDAMIENTO ================= -->
+      <div id="view-arriendo" style="display: none; width: 100%;">
+        <div class="section-header">
+          <h2>Arrendamiento 🔑</h2>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; width: 100%;">
+          
+          <div class="glass" style="padding: 20px;">
+            <div style="display:flex; justify-content: space-between; align-items: center;">
+              <h3>Estado Actual</h3>
+              <div id="semaforo-estado" class="semaforo on"></div>
+            </div>
+            <h1 style="color: var(--success); margin: 15px 0;">AL DÍA</h1>
+            <p style="font-size: 0.85rem; color: var(--text-light);">Último pago recibido: 02 de Febrero</p>
+          </div>
+
+          <div class="glass" style="padding: 20px;">
+            <h3>Vigencia Contrato</h3>
+            <div style="display:flex; justify-content: space-between; font-size: 0.8rem; margin-top: 10px; color: var(--text-light);">
+              <span>Inicio: Ene 2024</span>
+              <span>Fin: Ene 2025</span>
+            </div>
+            <div class="progress-container">
+              <div class="progress-bar" style="width: 85%;"></div>
+            </div>
+            <div style="text-align: right; font-weight: bold; color: var(--accent);">Faltan 45 días</div>
+            <button class="btn-action" style="margin-top: 10px; background: rgba(255,255,255,0.1); color: white;" onclick="window.open('#', '_blank')">
+              <i class="fas fa-file-pdf"></i> Ver PDF Contrato
+            </button>
+          </div>
+
+          <div class="glass" style="padding: 20px;">
+            <h3>Calculadora IPC</h3>
+            <div style="display:flex; gap: 10px; margin-top: 10px;">
+              <input type="number" id="canon-actual" placeholder="Canon Actual" value="800000" class="tool-input">
+              <input type="number" id="ipc-val" placeholder="IPC %" value="9.28" class="tool-input">
+            </div>
+            <button class="btn-action" style="margin-top: 10px;" onclick="calcularAumento()">Calcular Nuevo Canon</button>
+            <div id="res-canon" style="margin-top: 10px; font-weight: bold; text-align: center; color: white;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= VISTA HERRAMIENTAS ================= -->
+      <div id="view-herramientas" style="display: none; width: 100%;">
+        <div class="section-header">
+          <h2>Caja de Herramientas 🧰</h2>
+        </div>
+        
+        <div class="tools-grid" style="width: 100%;">
+          
+          <div class="glass tool-card" style="grid-column: span 2; min-width: 300px;">
+            <h3>Recibos del Mes</h3>
+            <div class="servicios-row">
+              <div class="srv-item" id="srv-agua" onclick="toggleServicio('srv-agua')">
+                <i class="fas fa-tint fa-2x"></i><span>Agua</span>
+              </div>
+              <div class="srv-item" id="srv-luz" onclick="toggleServicio('srv-luz')">
+                <i class="fas fa-bolt fa-2x"></i><span>Luz</span>
+              </div>
+              <div class="srv-item" id="srv-gas" onclick="toggleServicio('srv-gas')">
+                <i class="fas fa-fire fa-2x"></i><span>Gas</span>
+              </div>
+              <div class="srv-item" id="srv-wifi" onclick="toggleServicio('srv-wifi')">
+                <i class="fas fa-wifi fa-2x"></i><span>Wifi</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="glass tool-card">
+            <div class="tool-icon" style="background: #A813B7;"><i class="fas fa-calculator"></i></div>
+            <h4>Dividir Cuenta</h4>
+            <input type="number" id="monto-div" placeholder="Total $" class="tool-input">
+            <button class="btn-action" onclick="dividirGasto()">Dividir en 4</button>
+            <p id="res-div" style="margin-top:5px; font-weight:bold; color: white;"></p>
+          </div>
+
+          <div class="glass tool-card">
+            <div class="tool-icon" style="background: #2ecc71;"><i class="fab fa-whatsapp"></i></div>
+            <h4>Cobrar</h4>
+            <select id="wa-fam" class="tool-input">
+              <option>Familia 1</option><option>Familia 2</option><option>Inquilino</option>
+            </select>
+            <input type="number" id="wa-monto" placeholder="Monto" class="tool-input">
+            <button class="btn-action" style="background: #25D366; color: black;" onclick="generarWA()">Crear Msj</button>
+          </div>
+
+          <div class="glass tool-card">
+            <div class="tool-icon" style="background: #ff7675;"><i class="fas fa-phone-alt"></i></div>
+            <h4>Directorio</h4>
+            <div style="width: 100%; text-align: left; margin-top: 5px; color: var(--text-light);">
+              <div style="padding: 5px; border-bottom: 1px solid rgba(255,255,255,0.1);">👨‍🔧 Don Pedro (Plomero)</div>
+              <div style="padding: 5px;">⚡ Carlos (Electr.)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+
+    <div class="fab" onclick="alert('Aquí abriría el formulario de ingreso de datos')">
+      <i class="fas fa-plus"></i>
+    </div>
+
+    <div id="wrapped-overlay" class="wrapped-overlay">
+      <div class="story-card" id="story-card">
+        <span class="close-btn" onclick="cerrarWrapped()">&times;</span>
+        <div class="story-emoji" id="s-emoji">🤔</div>
+        <div class="story-title" id="s-title">Analizando...</div>
+        <div class="story-text" id="s-text">La IA está leyendo tus finanzas...</div>
+        <button class="btn-action" style="margin-top: 20px; background: white; color: #333;" onclick="nextSlide()">Siguiente</button>
+      </div>
+    </div>
+
+    <script>
+      window.addEventListener('load', () => {
+        setTimeout(() => {
+          document.getElementById('loader-pantalla').style.opacity = '0';
+          setTimeout(() => document.getElementById('loader-pantalla').style.display = 'none', 500);
+        }, 1500);
+
+        const now = new Date();
+        document.getElementById('fecha-hoy').innerText = now.toLocaleString('es-ES', { month: 'short', year: 'numeric' });
+
+        document.getElementById('notificacionYenny').style.display = 'block';
+
+        ['srv-agua', 'srv-luz', 'srv-gas', 'srv-wifi'].forEach(id => {
+          if (localStorage.getItem(id) === 'true') document.getElementById(id).classList.add('active');
+        });
+      });
+
+      function cambiarVista(vistaId, elementoMenu) {
+        ['view-dashboard', 'view-arriendo', 'view-herramientas'].forEach(id => {
+          document.getElementById(id).style.display = 'none';
+        });
+        
+        // CORREGIDO: Usamos GRID para Dashboard, BLOCK para el resto
+        const displayType = vistaId === 'view-dashboard' ? 'grid' : 'block';
+        document.getElementById('view-' + vistaId).style.display = displayType;
+
+        document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
+        elementoMenu.classList.add('active');
+      }
+
+      const ctx = document.getElementById('miGrafica').getContext('2d');
+      new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Servicios', 'Alimentos', 'Arriendo', 'Otros'],
+          datasets: [{
+            data: [35, 45, 10, 10],
+            backgroundColor: ['#A813B7', '#2ecc71', '#ffeaa7', '#ff7675'],
+            borderColor: 'transparent',
+            borderWidth: 0
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { 
+            legend: { 
+              position: 'right', 
+              labels: { 
+                color: 'white',
+                boxWidth: 10, 
+                font: { size: 10 } 
+              } 
+            } 
+          }
+        }
+      });
+
+      function toggleServicio(id) {
+        const el = document.getElementById(id);
+        el.classList.toggle('active');
+        localStorage.setItem(id, el.classList.contains('active'));
+      }
+
+      function dividirGasto() {
+        const monto = parseFloat(document.getElementById('monto-div').value);
+        if (monto) {
+          document.getElementById('res-div').innerText = `$${(monto / 4).toLocaleString()} c/u`;
+        }
+      }
+
+      function generarWA() {
+        const fam = document.getElementById('wa-fam').value;
+        const monto = document.getElementById('wa-monto').value;
+        const texto = `Hola ${fam}, paso a recordarles que el pendiente del mes es $${monto}. Gracias!`;
+        alert(`Mensaje copiado:\n"${texto}"`);
+      }
+
+      function calcularAumento() {
+        const actual = parseFloat(document.getElementById('canon-actual').value);
+        const ipc = parseFloat(document.getElementById('ipc-val').value);
+        const nuevo = actual + (actual * (ipc / 100));
+        document.getElementById('res-canon').innerText = `$${nuevo.toLocaleString()}`;
+      }
+
+      let slideIndex = 0;
+      const slides = [
+        { emoji: "🤑", title: "¡Rey del Ahorro!", text: "Este mes ingresaron $2,800 y solo gastaste $1,250. ¡Ese margen está increíble!" },
+        { emoji: "⚡", title: "Energía a tope", text: "Tu gasto #1 fue Servicios Públicos. ¿Quizás alguien dejó la luz prendida?" },
+        { emoji: "🚀", title: "Misión Marzo", text: "Si mantienes este ritmo, tendrás superávit para vacaciones. ¡Sigue así, Yenny!" }
+      ];
+
+      function abrirWrapped() {
+        document.getElementById('notificacionYenny').style.display = 'none';
+        document.getElementById('wrapped-overlay').style.display = 'flex';
+        slideIndex = 0;
+        mostrarSlide();
+      }
+
+      function cerrarWrapped() {
+        document.getElementById('wrapped-overlay').style.display = 'none';
+      }
+
+      function nextSlide() {
+        slideIndex++;
+        if (slideIndex < slides.length) {
+          mostrarSlide();
+        } else {
+          cerrarWrapped();
+        }
+      }
+
+      function mostrarSlide() {
+        const s = slides[slideIndex];
+        document.getElementById('s-emoji').innerText = s.emoji;
+        document.getElementById('s-title').innerText = s.title;
+        document.getElementById('s-text').innerText = s.text;
+        
+        const card = document.getElementById('story-card');
+        if(slideIndex === 0) card.style.background = "linear-gradient(135deg, #A813B7 0%, #2a0330 100%)";
+        if(slideIndex === 1) card.style.background = "linear-gradient(135deg, #ff7675 0%, #d63031 100%)";
+        if(slideIndex === 2) card.style.background = "linear-gradient(135deg, #2ecc71 0%, #00b894 100%)";
+      }
+    </script>
+  </body>
+</html>
