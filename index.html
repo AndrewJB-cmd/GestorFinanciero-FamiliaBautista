@@ -25,13 +25,13 @@
         --danger: #ff7675;
         --warning: #ffeaa7;
         
-        /* Fondo base inmutable */
-        --bg-main: #75009E;
+        /* El color de la esquina inferior derecha en Modo Oscuro */
+        --bg-secondary: #0a0a0a; 
       }
 
       /* --- PALETA LIGHT MODE --- */
       body.light-mode {
-        --glass-bg: rgba(255, 255, 255, 0.85); /* Blanco translúcido */
+        --glass-bg: rgba(255, 255, 255, 0.85);
         --glass-border: rgba(255, 255, 255, 0.5);
         --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
         
@@ -42,20 +42,31 @@
         --success: #27ae60;
         --danger: #e74c3c;
         --warning: #f39c12;
+        
+        /* El color de la esquina inferior derecha en Modo Claro */
+        --bg-secondary: #f4f4f9; 
       }
 
       * { box-sizing: border-box; margin: 0; padding: 0; outline: none; -webkit-tap-highlight-color: transparent; }
 
       body {
         font-family: 'Poppins', sans-serif;
-        background: var(--bg-main);
+        
+        /* TRUCO DE TRANSICIÓN DE GRADIENTE: 
+           El fondo cambia de negro a blanco suavemente, mientras un gradiente transparente superpuesto mantiene el morado estático en la esquina */
+        background-color: var(--bg-secondary);
+        background-image: linear-gradient(135deg, #75009E 0%, transparent 100%);
+        background-attachment: fixed;
+        
         color: var(--text-dark);
         height: 100vh;
         width: 100%;
         overflow: hidden;
         display: flex; 
         flex-direction: row;
-        transition: color 0.4s ease;
+        
+        /* Transición global súper suave para el cambio de tema */
+        transition: background-color 0.6s ease, color 0.6s ease;
       }
 
       /* --- SIDEBAR & ANIMACIÓN PERFECTA --- */
@@ -79,7 +90,7 @@
       }
       
       .sidebar:hover { 
-        width: 250px; /* Suficiente espacio para el texto centrado */
+        width: 250px;
       }
       
       /* Logo anclado */
@@ -97,10 +108,10 @@
       }
       .sidebar:hover .logo-text { opacity: 1; transition-delay: 0.1s; }
 
-      /* Ítems del menú con ancla estricta (Sin salto) */
+      /* Ítems del menú con ancla estricta */
       .menu-item {
         width: calc(100% - 20px);
-        margin: 8px 10px; /* Margen fijo = borde izquierdo inamovible */
+        margin: 8px 10px;
         padding: 12px 0;
         border-radius: 12px;
         color: var(--text-light); text-decoration: none; 
@@ -109,7 +120,6 @@
         transition: background 0.2s, color 0.2s;
       }
       
-      /* El ícono siempre mide 60px dentro del margen de 10px = Centro perfecto a 40px */
       .menu-item-icon {
         width: 60px; min-width: 60px; text-align: center; font-size: 20px;
       }
@@ -144,18 +154,17 @@
         color: var(--text-dark); background: rgba(128, 128, 128, 0.1);
       }
 
-      /* --- BOTTOM NAV (Switch & Refresh) con Retraso Ajustado --- */
+      /* --- BOTTOM NAV (Switch & Refresh) --- */
       .bottom-actions {
-        width: 250px; /* Ancho fijo para que no se aprieten */
+        width: 250px; 
         display: flex; flex-direction: row; align-items: center; justify-content: center;
         gap: 25px; margin-bottom: 20px;
-        opacity: 0; visibility: hidden; /* Invisibles al contraer */
-        transition: opacity 0.1s 0s, visibility 0s 0.1s; /* Se ocultan rápido al cerrar */
+        opacity: 0; visibility: hidden; 
+        transition: opacity 0.1s 0s, visibility 0s 0.1s; 
       }
       
       .sidebar:hover .bottom-actions {
         opacity: 1; visibility: visible;
-        /* Reducido a 0.3s (tiempo exacto de expansión) */
         transition: opacity 0.4s 0.3s, visibility 0s 0.3s; 
       }
 
@@ -206,7 +215,7 @@
       .glass {
         background: var(--glass-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
         border: 1px solid var(--glass-border); border-radius: 20px;
-        box-shadow: var(--glass-shadow); transition: background 0.4s, border 0.4s, box-shadow 0.4s;
+        box-shadow: var(--glass-shadow); transition: background 0.6s ease, border 0.6s ease, box-shadow 0.6s ease;
       }
 
       /* --- COMPONENTES --- */
@@ -322,7 +331,7 @@
             <p style="opacity: 0.8; font-size: 0.9rem;">Balance del Hogar</p>
           </div>
           <div style="text-align: right;">
-            <!-- Badge Fecha y Hora Dinámica -->
+            <!-- Badge Fecha y Hora Dinámica en Tiempo Real -->
             <div class="date-badge glass" id="fecha-hoy">Cargando fecha...</div>
           </div>
         </div>
@@ -418,29 +427,45 @@
 
     <!-- SCRIPTS -->
     <script>
-      // Lógica de Fecha y Hora Dinámica
+      // Lógica de Fecha y Hora Dinámica (Tiempo Real - Bogotá)
       function actualizarFechaHora() {
-        const now = new Date();
-        const opcionesFecha = { day: '2-digit', month: 'long', year: 'numeric' };
-        const fechaStr = now.toLocaleDateString('es-ES', opcionesFecha);
+        const date = new Date();
         
-        let horas = now.getHours();
-        let minutos = now.getMinutes();
-        const ampm = horas >= 12 ? 'pm' : 'am';
+        // Configuración estricta para la zona horaria de Bogotá y formato en español
+        const formatter = new Intl.DateTimeFormat('es-CO', {
+          timeZone: 'America/Bogota',
+          day: '2-digit',
+          month: 'long',
+          year: 'numeric',
+          hour: 'numeric',
+          minute: '2-digit',
+          hour12: true
+        });
+
+        // Extraer las partes formateadas para armar el string exacto que pediste
+        const parts = formatter.formatToParts(date);
+        let dia = '', mes = '', anio = '', hora = '', minuto = '', ampm = '';
         
-        horas = horas % 12;
-        horas = horas ? horas : 12; // La hora '0' debe mostrarse como '12'
-        minutos = minutos < 10 ? '0' + minutos : minutos; // Añadir un 0 si los minutos son < 10
+        for (const part of parts) {
+          if (part.type === 'day') dia = part.value;
+          if (part.type === 'month') mes = part.value;
+          if (part.type === 'year') anio = part.value;
+          if (part.type === 'hour') hora = part.value;
+          if (part.type === 'minute') minuto = part.value;
+          if (part.type === 'dayPeriod') ampm = part.value.toLowerCase().replace(/\./g, '').trim(); // Limpia "a. m." a "am"
+        }
         
-        const fechaHoraFinal = `${fechaStr} | ${horas}:${minutos} ${ampm}`;
+        // Formato exacto: DD de MMMM de YYYY | HH:MM am/pm
+        const fechaHoraFinal = `${dia} de ${mes} de ${anio} | ${hora}:${minuto} ${ampm}`;
         document.getElementById('fecha-hoy').innerText = fechaHoraFinal;
       }
 
       window.addEventListener('load', () => {
-        // Inicializar fecha
+        // Inicializar fecha de inmediato
         actualizarFechaHora();
-        // Actualizar el reloj cada 60 segundos
-        setInterval(actualizarFechaHora, 60000);
+        
+        // Actualizar el reloj cada 1000 milisegundos (1 segundo) para evitar retrasos visuales
+        setInterval(actualizarFechaHora, 1000);
         
         if(localStorage.getItem('temaFamilia') === 'light') {
           document.body.classList.add('light-mode');
