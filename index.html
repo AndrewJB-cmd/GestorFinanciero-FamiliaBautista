@@ -27,7 +27,7 @@
         --success: #2ecc71;
         --danger: #ff7675;
         --warning: #ffeaa7;
-        --gold: #F1C40F; /* Nuevo color amarillo para saldo */
+        --gold: #F1C40F; 
         
         --bg-secondary: #0a0a0a; 
       }
@@ -48,7 +48,7 @@
         --success: #27ae60;
         --danger: #e74c3c;
         --warning: #f39c12;
-        --gold: #D4AC0D; /* Dorado ligeramente más oscuro para fondos claros */
+        --gold: #D4AC0D; 
         
         --bg-secondary: #f4f4f9; 
       }
@@ -176,13 +176,22 @@
         color: var(--text-dark); margin-bottom: 10px; width: 100%;
       }
 
-      /* Estructura para gráficos duales sin afectar la cuadrícula principal */
+      /* Estructura para gráficos */
       .charts-wrapper {
         grid-column: 1 / -1; 
         display: grid; 
         grid-template-columns: repeat(2, 1fr); 
         gap: 20px;
       }
+
+      .chart-controls {
+        display: flex; align-items: center; gap: 12px; font-size: 0.85rem; color: var(--text-light);
+      }
+      .chart-controls i {
+        cursor: pointer; transition: color 0.2s ease, transform 0.2s ease;
+      }
+      .chart-controls i:hover { color: var(--text-dark); transform: scale(1.1); }
+      .chart-controls span { font-weight: 600; color: var(--text-dark); user-select: none; }
 
       /* --- LIQUID GLASS EN TARJETAS --- */
       .glass {
@@ -342,7 +351,7 @@
       .modal-overlay.active .modal-glass { transform: translateY(0) scale(1); }
 
       .modal-input {
-        width: 100%; padding: 12px 15px; margin: 8px 0; /* Eliminado margen inferior excesivo */
+        width: 100%; padding: 12px 15px; margin: 8px 0;
         border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 12px;
         background: rgba(0, 0, 0, 0.3); color: white;
         font-size: 0.95rem; transition: border 0.3s ease, background 0.3s ease, opacity 0.3s ease;
@@ -366,7 +375,7 @@
         box-shadow: 0 4px 15px rgba(168, 19, 183, 0.4);
       }
 
-      /* --- NUEVO: Botoneras Outline (Como Borde Fuerte para Contratos) --- */
+      /* Botoneras Outline (Como Borde Fuerte para Contratos) */
       .role-btn-outline {
         flex: 1; padding: 10px 5px; font-size: 0.75rem; font-weight: 600;
         border-radius: 12px; border: 2px solid rgba(255, 255, 255, 0.2);
@@ -374,9 +383,9 @@
         cursor: pointer; transition: all 0.3s ease;
       }
       .role-btn-outline.active {
-        border-color: var(--accent); /* Borde morado brillante */
+        border-color: var(--accent); 
         color: white;
-        box-shadow: 0 0 15px rgba(168, 19, 183, 0.5); /* Resplandor neón exterior */
+        box-shadow: 0 0 15px rgba(168, 19, 183, 0.5); 
       }
 
       /* ---------------------------------------------------- */
@@ -438,7 +447,6 @@
       /* ---------------------------------------------------- */
       /* BOTONES DE EXENCIÓN EN MODAL CONTRATO                */
       /* ---------------------------------------------------- */
-      /* CORRECCIÓN DE SOLAPAMIENTO: Margen top positivo para aislar la viñeta */
       .override-toggle {
         display: inline-flex; align-items: center; gap: 8px; 
         margin-top: 10px; margin-bottom: 15px; margin-left: 5px; 
@@ -603,7 +611,7 @@
           </div>
         </div>
 
-        <!-- 1. Tarjeta Gastos (Estilo Borde Rojo) -->
+        <!-- 1. Tarjeta Gastos -->
         <div class="kpi-card glass third-width" style="order: 1; border-color: var(--danger); background: linear-gradient(135deg, rgba(255, 118, 117, 0.2) 0%, rgba(255, 118, 117, 0.02) 100%);">
           <div>
             <div class="kpi-title" style="color: var(--text-dark);"><i class="fas fa-arrow-down" style="color: var(--danger);"></i> Gastos</div>
@@ -612,7 +620,7 @@
           <div class="kpi-value" style="color: var(--text-dark)">$1,250</div>
         </div>
 
-        <!-- 2. Tarjeta Saldo (Estilo Borde Amarillo/Dorado) -->
+        <!-- 2. Tarjeta Saldo -->
         <div class="kpi-card glass third-width" style="order: 2; border-color: var(--gold); background: linear-gradient(135deg, rgba(241, 196, 15, 0.2) 0%, rgba(241, 196, 15, 0.02) 100%);">
           <div>
             <div class="kpi-title" style="color: var(--text-dark);"><i class="fas fa-wallet" style="color: var(--gold);"></i> Saldo</div>
@@ -621,7 +629,7 @@
           <div class="kpi-value" style="color: var(--text-dark)">$1,550</div>
         </div>
         
-        <!-- 3. Tarjeta Ingresos (Estilo Borde Verde) -->
+        <!-- 3. Tarjeta Ingresos -->
         <div class="kpi-card glass third-width" style="order: 3; border-color: var(--success); background: linear-gradient(135deg, rgba(46, 204, 113, 0.2) 0%, rgba(46, 204, 113, 0.02) 100%);">
           <div>
             <div class="kpi-title" style="color: var(--text-dark);"><i class="fas fa-arrow-up" style="color: var(--success);"></i> Ingresos</div>
@@ -630,12 +638,19 @@
           <div class="kpi-value" style="color: var(--text-dark)">$2,800</div>
         </div>
 
-        <!-- 4. Contenedor de Gráficos Duales -->
+        <!-- 4. Contenedor de Gráficos (4 Tarjetas) -->
         <div class="charts-wrapper" style="order: 4;">
           
           <!-- Gráfico: Rendimiento Anual -->
           <div class="glass" style="padding: 20px; display: flex; flex-direction: column; min-height: 280px;">
-            <h3 style="font-size: 1rem; color:var(--text-dark); margin-bottom: 15px;">Rendimiento Anual</h3>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+              <h3 style="font-size: 1rem; color:var(--text-dark);">Rendimiento Anual</h3>
+              <div class="chart-controls">
+                <i class="fas fa-chevron-left"></i>
+                <span>2026 Jul</span>
+                <i class="fas fa-chevron-right"></i>
+              </div>
+            </div>
             <div style="flex: 1; position: relative;">
               <canvas id="chart-anual"></canvas>
             </div>
@@ -643,9 +658,46 @@
 
           <!-- Gráfico: Rendimiento Mensual -->
           <div class="glass" style="padding: 20px; display: flex; flex-direction: column; min-height: 280px;">
-            <h3 style="font-size: 1rem; color:var(--text-dark); margin-bottom: 15px;">Rendimiento Mensual</h3>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+              <h3 style="font-size: 1rem; color:var(--text-dark);">Rendimiento Mensual</h3>
+              <div class="chart-controls">
+                <i class="fas fa-chevron-left"></i>
+                <span>2026 Jul</span>
+                <i class="fas fa-chevron-right"></i>
+              </div>
+            </div>
             <div style="flex: 1; position: relative;">
               <canvas id="chart-mensual"></canvas>
+            </div>
+          </div>
+
+          <!-- Gráfico: Circular (Distribución) -->
+          <div class="glass" style="padding: 20px; display: flex; flex-direction: column; min-height: 280px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+              <h3 style="font-size: 1rem; color:var(--text-dark);">Distribución de Gastos</h3>
+              <div class="chart-controls">
+                <i class="fas fa-chevron-left"></i>
+                <span>2026 Jul</span>
+                <i class="fas fa-chevron-right"></i>
+              </div>
+            </div>
+            <div style="flex: 1; position: relative; display: flex; align-items: center; justify-content: center;">
+              <canvas id="chart-circular"></canvas>
+            </div>
+          </div>
+
+          <!-- Gráfico: Columnas Apiladas (Flujo) -->
+          <div class="glass" style="padding: 20px; display: flex; flex-direction: column; min-height: 280px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+              <h3 style="font-size: 1rem; color:var(--text-dark);">Flujo de Efectivo</h3>
+              <div class="chart-controls">
+                <i class="fas fa-chevron-left"></i>
+                <span>2026 Jul</span>
+                <i class="fas fa-chevron-right"></i>
+              </div>
+            </div>
+            <div style="flex: 1; position: relative;">
+              <canvas id="chart-apilado"></canvas>
             </div>
           </div>
 
@@ -972,20 +1024,24 @@
           });
         }
 
-        // 2. Gráfico Mensual (Barras de Balance)
+        // 2. Gráfico Mensual (Barras de Balance Diario 1 al 31)
         const ctxMensual = document.getElementById('chart-mensual');
         if (ctxMensual) {
+          const diasDelMes = Array.from({length: 31}, (_, i) => i + 1);
+          // Genera valores aleatorios entre -50 y 150 para simular la dinámica del mes
+          const dataMensual = diasDelMes.map(() => Math.floor(Math.random() * 200) - 50);
+
           new Chart(ctxMensual, {
             type: 'bar',
             data: {
-              labels: ['Sem 1', 'Sem 2', 'Sem 3', 'Sem 4'],
+              labels: diasDelMes,
               datasets: [{
-                label: 'Balance Neto',
-                data: [450, 600, -150, 650],
+                label: 'Balance Neto Diario',
+                data: dataMensual,
                 backgroundColor: (context) => {
                   return context.raw >= 0 ? '#F1C40F' : '#ff7675'; /* gold or danger */
                 },
-                borderRadius: 6
+                borderRadius: 4
               }]
             },
             options: {
@@ -994,7 +1050,72 @@
               plugins: { legend: { display: false } },
               scales: {
                 y: { grid: { color: 'rgba(128, 128, 128, 0.15)' }, border: { display: false } },
-                x: { grid: { display: false }, border: { display: false } }
+                x: { 
+                  grid: { display: false }, 
+                  border: { display: false },
+                  ticks: { maxTicksLimit: 15 } /* Evita saturar la barra X con 31 números pegados */
+                }
+              }
+            }
+          });
+        }
+
+        // 3. Gráfico Circular (Distribución)
+        const ctxCircular = document.getElementById('chart-circular');
+        if (ctxCircular) {
+          new Chart(ctxCircular, {
+            type: 'doughnut',
+            data: {
+              labels: ['Servicios', 'Arriendo', 'Mercado', 'Otros'],
+              datasets: [{
+                data: [350, 800, 450, 150],
+                backgroundColor: ['#3498db', '#2ecc71', '#f1c40f', '#e74c3c'],
+                borderWidth: 0,
+                hoverOffset: 6
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: { 
+                legend: { position: 'bottom', labels: { boxWidth: 12, usePointStyle: true, padding: 20 } } 
+              },
+              cutout: '75%'
+            }
+          });
+        }
+
+        // 4. Gráfico Apilado (Flujo de Efectivo)
+        const ctxApilado = document.getElementById('chart-apilado');
+        if (ctxApilado) {
+          new Chart(ctxApilado, {
+            type: 'bar',
+            data: {
+              labels: ['Sem 1', 'Sem 2', 'Sem 3', 'Sem 4'],
+              datasets: [
+                {
+                  label: 'Ingresos',
+                  data: [1200, 500, 800, 300],
+                  backgroundColor: 'rgba(46, 204, 113, 0.8)',
+                  borderRadius: 4
+                },
+                {
+                  label: 'Gastos',
+                  data: [400, 600, 300, 900],
+                  backgroundColor: 'rgba(255, 118, 117, 0.8)',
+                  borderRadius: 4
+                }
+              ]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              scales: {
+                x: { stacked: true, grid: { display: false }, border: { display: false } },
+                y: { stacked: true, grid: { color: 'rgba(128, 128, 128, 0.15)' }, border: { display: false } }
+              },
+              plugins: { 
+                legend: { position: 'top', labels: { boxWidth: 12, usePointStyle: true } } 
               }
             }
           });
