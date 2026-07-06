@@ -27,6 +27,7 @@
         --success: #2ecc71;
         --danger: #ff7675;
         --warning: #ffeaa7;
+        --gold: #F1C40F; /* Nuevo color amarillo para saldo */
         
         --bg-secondary: #0a0a0a; 
       }
@@ -47,6 +48,7 @@
         --success: #27ae60;
         --danger: #e74c3c;
         --warning: #f39c12;
+        --gold: #D4AC0D; /* Dorado ligeramente más oscuro para fondos claros */
         
         --bg-secondary: #f4f4f9; 
       }
@@ -172,6 +174,14 @@
       .section-header {
         grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: center;
         color: var(--text-dark); margin-bottom: 10px; width: 100%;
+      }
+
+      /* Estructura para gráficos duales sin afectar la cuadrícula principal */
+      .charts-wrapper {
+        grid-column: 1 / -1; 
+        display: grid; 
+        grid-template-columns: repeat(2, 1fr); 
+        gap: 20px;
       }
 
       /* --- LIQUID GLASS EN TARJETAS --- */
@@ -506,6 +516,7 @@
         .main-content { padding: 20px 20px 90px 20px; }
         .grid-layout { grid-template-columns: 1fr; }
         .third-width, .half-width, .full-width { grid-column: 1 / -1; }
+        .charts-wrapper { grid-template-columns: 1fr !important; }
         .logo, .menu-text { display: none; }
         .menu-item { width: auto; margin: 0; padding: 10px; flex-direction: column; }
         .menu-item-icon { width: auto; min-width: auto; }
@@ -592,31 +603,56 @@
           </div>
         </div>
 
-        <div class="kpi-card glass third-width" style="order: 1;">
+        <!-- 1. Tarjeta Gastos (Estilo Borde Rojo) -->
+        <div class="kpi-card glass third-width" style="order: 1; border-color: var(--danger); background: linear-gradient(135deg, rgba(255, 118, 117, 0.2) 0%, rgba(255, 118, 117, 0.02) 100%);">
           <div>
-            <div class="kpi-title"><i class="fas fa-arrow-down" style="color: var(--danger)"></i> Gastos</div>
+            <div class="kpi-title" style="color: var(--text-dark);"><i class="fas fa-arrow-down" style="color: var(--danger);"></i> Gastos</div>
             <div class="kpi-trend" style="color: var(--danger)">+5% vs mes ant.</div>
           </div>
-          <div class="kpi-value">$1,250</div>
+          <div class="kpi-value" style="color: var(--text-dark)">$1,250</div>
         </div>
 
-        <div class="kpi-card glass third-width" style="order: 2; border-color: var(--accent); background: linear-gradient(135deg, rgba(168, 19, 183, 0.3) 0%, rgba(168, 19, 183, 0.05) 100%);">
+        <!-- 2. Tarjeta Saldo (Estilo Borde Amarillo/Dorado) -->
+        <div class="kpi-card glass third-width" style="order: 2; border-color: var(--gold); background: linear-gradient(135deg, rgba(241, 196, 15, 0.2) 0%, rgba(241, 196, 15, 0.02) 100%);">
           <div>
-            <div class="kpi-title" style="color: var(--text-dark);"><i class="fas fa-wallet" style="color: var(--accent);"></i> Saldo</div>
+            <div class="kpi-title" style="color: var(--text-dark);"><i class="fas fa-wallet" style="color: var(--gold);"></i> Saldo</div>
             <div class="kpi-trend" style="color: var(--text-light)">Disponible</div>
           </div>
           <div class="kpi-value" style="color: var(--text-dark)">$1,550</div>
         </div>
         
-        <div class="kpi-card glass third-width" style="order: 3;">
+        <!-- 3. Tarjeta Ingresos (Estilo Borde Verde) -->
+        <div class="kpi-card glass third-width" style="order: 3; border-color: var(--success); background: linear-gradient(135deg, rgba(46, 204, 113, 0.2) 0%, rgba(46, 204, 113, 0.02) 100%);">
           <div>
-            <div class="kpi-title"><i class="fas fa-arrow-up" style="color: var(--success)"></i> Ingresos</div>
+            <div class="kpi-title" style="color: var(--text-dark);"><i class="fas fa-arrow-up" style="color: var(--success);"></i> Ingresos</div>
             <div class="kpi-trend" style="color: var(--success)">Estable</div>
           </div>
-          <div class="kpi-value">$2,800</div>
+          <div class="kpi-value" style="color: var(--text-dark)">$2,800</div>
         </div>
 
-        <div class="glass full-width table-card" style="order: 4;">
+        <!-- 4. Contenedor de Gráficos Duales -->
+        <div class="charts-wrapper" style="order: 4;">
+          
+          <!-- Gráfico: Rendimiento Anual -->
+          <div class="glass" style="padding: 20px; display: flex; flex-direction: column; min-height: 280px;">
+            <h3 style="font-size: 1rem; color:var(--text-dark); margin-bottom: 15px;">Rendimiento Anual</h3>
+            <div style="flex: 1; position: relative;">
+              <canvas id="chart-anual"></canvas>
+            </div>
+          </div>
+
+          <!-- Gráfico: Rendimiento Mensual -->
+          <div class="glass" style="padding: 20px; display: flex; flex-direction: column; min-height: 280px;">
+            <h3 style="font-size: 1rem; color:var(--text-dark); margin-bottom: 15px;">Rendimiento Mensual</h3>
+            <div style="flex: 1; position: relative;">
+              <canvas id="chart-mensual"></canvas>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- 5. Tabla de Movimientos -->
+        <div class="glass full-width table-card" style="order: 5;">
           <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
             <h3 style="font-size: 1rem; color:var(--text-dark);">Últimos Movimientos</h3>
             <span style="font-size: 0.8rem; color: var(--accent); cursor: pointer;">Ver todo</span>
@@ -890,6 +926,81 @@
         document.getElementById('fecha-hoy').innerText = `${dia} de ${mes} de ${anio} | ${hora}:${minuto} ${ampm}`;
       }
 
+      // --- Inicialización de Gráficos (Chart.js) ---
+      function initCharts() {
+        // Configuraciones globales para que luzca bien en ambos temas
+        Chart.defaults.color = '#888';
+        Chart.defaults.font.family = "'Poppins', sans-serif";
+
+        // 1. Gráfico Anual (Líneas Suaves)
+        const ctxAnual = document.getElementById('chart-anual');
+        if (ctxAnual) {
+          new Chart(ctxAnual, {
+            type: 'line',
+            data: {
+              labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul'],
+              datasets: [{
+                label: 'Ingresos',
+                data: [2800, 2900, 3100, 2700, 3200, 2800, 3500],
+                borderColor: '#2ecc71', /* success */
+                backgroundColor: 'rgba(46, 204, 113, 0.1)',
+                borderWidth: 2,
+                tension: 0.4,
+                fill: true
+              }, {
+                label: 'Gastos',
+                data: [1250, 1400, 1300, 1600, 1200, 1500, 1250],
+                borderColor: '#ff7675', /* danger */
+                backgroundColor: 'rgba(255, 118, 117, 0.1)',
+                borderWidth: 2,
+                tension: 0.4,
+                fill: true
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: { 
+                legend: { position: 'top', labels: { boxWidth: 12, usePointStyle: true } } 
+              },
+              scales: {
+                y: { grid: { color: 'rgba(128, 128, 128, 0.15)' }, border: { display: false } },
+                x: { grid: { display: false }, border: { display: false } }
+              },
+              interaction: { mode: 'index', intersect: false }
+            }
+          });
+        }
+
+        // 2. Gráfico Mensual (Barras de Balance)
+        const ctxMensual = document.getElementById('chart-mensual');
+        if (ctxMensual) {
+          new Chart(ctxMensual, {
+            type: 'bar',
+            data: {
+              labels: ['Sem 1', 'Sem 2', 'Sem 3', 'Sem 4'],
+              datasets: [{
+                label: 'Balance Neto',
+                data: [450, 600, -150, 650],
+                backgroundColor: (context) => {
+                  return context.raw >= 0 ? '#F1C40F' : '#ff7675'; /* gold or danger */
+                },
+                borderRadius: 6
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: { legend: { display: false } },
+              scales: {
+                y: { grid: { color: 'rgba(128, 128, 128, 0.15)' }, border: { display: false } },
+                x: { grid: { display: false }, border: { display: false } }
+              }
+            }
+          });
+        }
+      }
+
       window.addEventListener('load', () => {
         actualizarFechaHora();
         setInterval(actualizarFechaHora, 1000);
@@ -897,6 +1008,9 @@
         if(localStorage.getItem('temaFamilia') === 'light') {
           document.body.classList.add('light-mode');
         }
+
+        // Arrancamos los gráficos al cargar
+        initCharts();
       });
 
       function cambiarVista(vistaId, elementoMenu) {
