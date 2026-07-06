@@ -343,7 +343,7 @@
       /* Campos deshabilitados */
       .modal-input:disabled { opacity: 0.4; cursor: not-allowed; border: 1px dashed rgba(255,255,255,0.2); }
 
-      /* Botoneras */
+      /* Botoneras Base (Con Relleno) */
       .role-btn {
         flex: 1; padding: 10px 5px; font-size: 0.75rem; font-weight: 600;
         border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.2);
@@ -354,6 +354,19 @@
         background: linear-gradient(135deg, var(--accent) 0%, #6c5ce7 100%);
         color: white; border-color: rgba(255, 255, 255, 0.5);
         box-shadow: 0 4px 15px rgba(168, 19, 183, 0.4);
+      }
+
+      /* Botoneras Outline (Como Borde para Contrato Ordinal/Familiar) */
+      .role-btn-outline {
+        flex: 1; padding: 10px 5px; font-size: 0.75rem; font-weight: 600;
+        border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.2);
+        background: transparent; color: rgba(255, 255, 255, 0.7);
+        cursor: pointer; transition: all 0.3s ease;
+      }
+      .role-btn-outline.active {
+        background: rgba(168, 19, 183, 0.05); /* Tinte súper suave */
+        color: white; border-color: var(--accent);
+        box-shadow: 0 0 15px rgba(168, 19, 183, 0.4), inset 0 0 10px rgba(168, 19, 183, 0.2);
       }
 
       /* ---------------------------------------------------- */
@@ -416,7 +429,8 @@
       /* BOTONES DE EXENCIÓN EN MODAL CONTRATO                */
       /* ---------------------------------------------------- */
       .override-toggle {
-        display: inline-flex; align-items: center; gap: 8px; margin-top: -10px; margin-bottom: 15px; margin-left: 5px;
+        display: inline-flex; align-items: center; gap: 8px; 
+        margin-top: 6px; margin-bottom: 10px; margin-left: 5px; /* Corrección de solapamiento */
         color: rgba(255,255,255,0.4); font-size: 0.75rem; cursor: pointer; transition: color 0.3s ease;
       }
       .override-toggle.active { color: var(--success); }
@@ -776,10 +790,10 @@
             <button class="role-btn active" onclick="seleccionarAccionContrato(this)">Generar contrato</button>
             <button class="role-btn" onclick="seleccionarAccionContrato(this)">Cargar contrato</button>
           </div>
-          <!-- Botonera Tipo Contrato -->
+          <!-- Botonera Tipo Contrato (Diseño Borde/Outline) -->
           <div style="display: flex; gap: 8px; margin-top: 10px;">
-            <button class="role-btn active" onclick="seleccionarTipoContrato(this, 'ordinal')">Contrato ordinal</button>
-            <button class="role-btn" onclick="seleccionarTipoContrato(this, 'familiar')">Contrato familiar</button>
+            <button class="role-btn-outline active" onclick="seleccionarTipoContrato(this, 'ordinal')">Contrato ordinal</button>
+            <button class="role-btn-outline" onclick="seleccionarTipoContrato(this, 'familiar')">Contrato familiar</button>
           </div>
         </div>
         
@@ -811,7 +825,7 @@
           <div style="display: flex; flex-direction: column;">
             <label style="font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-left: 5px; font-weight: 600;">Canon Base ($)</label>
             <input type="number" id="input-canon" placeholder="$ 0" class="modal-input" style="margin-bottom: 0;">
-            <div class="override-toggle" id="toggle-canon" onclick="toggleFieldOverride('input-canon', 'toggle-canon')">
+            <div class="override-toggle" id="toggle-canon" onclick="toggleFieldOverride('input-canon', 'toggle-canon')" style="display: none;">
               <div class="rule-circle"><i class="fas fa-check"></i></div>
               <span>Eximido</span>
             </div>
@@ -820,7 +834,7 @@
           <div style="display: flex; flex-direction: column;">
             <label style="font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-left: 5px; font-weight: 600;">Día de Corte/Pago</label>
             <input type="number" id="input-dia-pago" placeholder="Ej: 5" min="1" max="31" class="modal-input" style="margin-bottom: 0;">
-            <div class="override-toggle" id="toggle-dia" onclick="toggleFieldOverride('input-dia-pago', 'toggle-dia')">
+            <div class="override-toggle" id="toggle-dia" onclick="toggleFieldOverride('input-dia-pago', 'toggle-dia')" style="display: none;">
               <div class="rule-circle"><i class="fas fa-check"></i></div>
               <span>A beneficio</span>
             </div>
@@ -835,13 +849,13 @@
           <div style="display: flex; flex-direction: column;">
             <label style="font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-left: 5px; font-weight: 600;">Fecha de Vencimiento</label>
             <input type="date" id="input-vencimiento" class="modal-input" style="color: rgba(255,255,255,0.7); margin-bottom: 0;">
-            <div class="override-toggle" id="toggle-vencimiento" onclick="toggleFieldOverride('input-vencimiento', 'toggle-vencimiento')">
+            <div class="override-toggle" id="toggle-vencimiento" onclick="toggleFieldOverride('input-vencimiento', 'toggle-vencimiento')" style="display: none;">
               <div class="rule-circle"><i class="fas fa-check"></i></div>
               <span>Indefinido</span>
             </div>
           </div>
 
-          <div style="grid-column: 1 / -1;">
+          <div id="container-observaciones" style="grid-column: 1 / -1; display: none;">
             <label style="font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-left: 5px; font-weight: 600;">Observaciones</label>
             <textarea maxlength="2000" placeholder="Escribe aquí las observaciones del contrato..." class="modal-input" style="resize: vertical; min-height: 80px;"></textarea>
           </div>
@@ -995,16 +1009,41 @@
       }
 
       function seleccionarTipoContrato(btn, tipo) {
-        const botones = btn.parentElement.querySelectorAll('.role-btn');
+        const botones = btn.parentElement.querySelectorAll('.role-btn-outline');
         botones.forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         
-        // Cambiar el mensaje del menú desplegable según el tipo
         const msgDiv = document.getElementById('msg-dropdown-perfiles');
+        const obsContainer = document.getElementById('container-observaciones');
+        
+        const toggleMap = {
+            'toggle-canon': 'input-canon',
+            'toggle-dia': 'input-dia-pago',
+            'toggle-vencimiento': 'input-vencimiento'
+        };
+
         if(tipo === 'familiar') {
             msgDiv.innerText = "No se encontraron perfiles de Colaborador o Integrante activos.";
+            
+            // Mostrar los botones de exención y observaciones
+            for (const tId in toggleMap) {
+                document.getElementById(tId).style.display = 'inline-flex';
+            }
+            obsContainer.style.display = 'block';
+            
         } else {
             msgDiv.innerText = "No se encontraron perfiles activos para parametrizar.";
+            
+            // Ocultar los botones, limpiar su estado si estaban activos y ocultar observaciones
+            for (const [tId, iId] of Object.entries(toggleMap)) {
+                const t = document.getElementById(tId);
+                t.style.display = 'none';
+                if (t.classList.contains('active')) {
+                    t.classList.remove('active');
+                    document.getElementById(iId).disabled = false;
+                }
+            }
+            obsContainer.style.display = 'none';
         }
       }
 
