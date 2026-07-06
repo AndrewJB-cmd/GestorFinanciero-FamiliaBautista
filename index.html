@@ -254,7 +254,6 @@
       .fab-container.active .fab { transform: rotate(45deg); }
       .fab-container.active .fab:hover { transform: rotate(45deg) scale(1.08); }
 
-      /* El menú de sub-botones ahora usa Flexbox (column-reverse) para apilarse limpiamente */
       .fab-menu {
         position: absolute; bottom: 65px; right: 0; width: 55px; 
         display: flex; flex-direction: column-reverse; align-items: center; gap: 15px;
@@ -301,7 +300,6 @@
       }
       .modal-overlay.active { opacity: 1; }
       
-      /* Clase para eliminar el blur durante la transición entre modales */
       .modal-overlay.transition-no-blur {
         backdrop-filter: none !important;
         -webkit-backdrop-filter: none !important;
@@ -321,11 +319,15 @@
         color: white; 
         transform: translateY(30px) scale(0.95);
         transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        max-height: 90vh; /* Prevención para pantallas pequeñas */
+        overflow-y: auto;
       }
       
-      /* Clases de ancho para el modal */
+      /* Ocultar barra de scroll en modal */
+      .modal-glass::-webkit-scrollbar { width: 0px; background: transparent; }
+      
       .modal-md { max-width: 420px; }
-      .modal-lg { max-width: 600px; } /* Más amplio para el contrato */
+      .modal-lg { max-width: 600px; } 
       
       .modal-overlay.active .modal-glass { transform: translateY(0) scale(1); }
 
@@ -333,12 +335,15 @@
         width: 100%; padding: 12px 15px; margin: 8px 0 20px;
         border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 12px;
         background: rgba(0, 0, 0, 0.3); color: white;
-        font-size: 0.95rem; transition: border 0.3s ease, background 0.3s ease;
+        font-size: 0.95rem; transition: border 0.3s ease, background 0.3s ease, opacity 0.3s ease;
       }
       .modal-input:focus { border: 1px solid var(--accent); background: rgba(0, 0, 0, 0.5); }
       .modal-input::placeholder { color: rgba(255, 255, 255, 0.4); }
+      
+      /* Campos deshabilitados */
+      .modal-input:disabled { opacity: 0.4; cursor: not-allowed; border: 1px dashed rgba(255,255,255,0.2); }
 
-      /* Estilos para la botonera de roles y contratos */
+      /* Botoneras */
       .role-btn {
         flex: 1; padding: 10px 5px; font-size: 0.75rem; font-weight: 600;
         border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.2);
@@ -352,17 +357,15 @@
       }
 
       /* ---------------------------------------------------- */
-      /* CONTENEDOR DE CONTRASEÑA E ICONOS DE COPIAR / MAGIA  */
+      /* CONTENEDOR DE CONTRASEÑA E ICONOS                    */
       /* ---------------------------------------------------- */
       .pwd-container { position: relative; width: 100%; margin: 8px 0 10px; display: flex; align-items: center; }
-      
       .pwd-input { width: 100%; padding: 12px 85px 12px 15px; margin: 0; box-sizing: border-box; }
       
       .pwd-actions {
         position: absolute; right: 6px; top: 6px; bottom: 6px;
         display: flex; gap: 4px; align-items: center; justify-content: flex-end;
       }
-      
       .action-wrapper { height: 100%; aspect-ratio: 1; position: relative; }
 
       .copy-icon-btn {
@@ -381,7 +384,6 @@
       }
       .gen-pwd-btn:hover { background: rgba(255, 255, 255, 0.25); }
 
-      /* Tooltip Premium para la varita */
       .tooltip-container:hover .tooltip-text { visibility: visible; opacity: 1; bottom: 140%; }
       .tooltip-text {
         visibility: hidden; background-color: rgba(0,0,0,0.9); color: #fff;
@@ -396,65 +398,55 @@
       }
 
       /* ---------------------------------------------------- */
-      /* INDICADORES DE SEGURIDAD (CHECKLIST)                 */
+      /* INDICADORES DE SEGURIDAD                             */
       /* ---------------------------------------------------- */
-      .pwd-rules {
-        display: flex; flex-direction: column; gap: 6px; 
-        margin-bottom: 25px; padding-left: 5px;
-      }
-      .pwd-rule {
-        display: flex; align-items: center; gap: 8px; 
-        color: rgba(255,255,255,0.4); font-size: 0.75rem; 
-        transition: color 0.4s ease;
-      }
+      .pwd-rules { display: flex; flex-direction: column; gap: 6px; margin-bottom: 25px; padding-left: 5px; }
+      .pwd-rule { display: flex; align-items: center; gap: 8px; color: rgba(255,255,255,0.4); font-size: 0.75rem; transition: color 0.4s ease; }
       .rule-circle {
         width: 14px; height: 14px; min-width: 14px; border-radius: 50%; 
-        border: 1px solid rgba(255,255,255,0.4); 
-        display: flex; align-items: center; justify-content: center; 
-        transition: all 0.4s ease;
+        border: 1px solid rgba(255,255,255,0.4); display: flex; align-items: center; justify-content: center; transition: all 0.4s ease;
       }
-      .rule-circle i {
-        font-size: 8px; opacity: 0; transform: scale(0.5);
-        transition: opacity 0.4s ease, transform 0.4s ease, color 0.4s ease;
-      }
+      .rule-circle i { font-size: 8px; opacity: 0; transform: scale(0.5); transition: opacity 0.4s ease, transform 0.4s ease, color 0.4s ease; }
       
       .pwd-rule.valid { color: var(--success); }
       .pwd-rule.valid .rule-circle { border-color: var(--success); background: rgba(46, 204, 113, 0.1); }
       .pwd-rule.valid .rule-circle i { opacity: 1; transform: scale(1); color: var(--success); }
 
       /* ---------------------------------------------------- */
+      /* BOTONES DE EXENCIÓN EN MODAL CONTRATO                */
+      /* ---------------------------------------------------- */
+      .override-toggle {
+        display: inline-flex; align-items: center; gap: 8px; margin-top: -10px; margin-bottom: 15px; margin-left: 5px;
+        color: rgba(255,255,255,0.4); font-size: 0.75rem; cursor: pointer; transition: color 0.3s ease;
+      }
+      .override-toggle.active { color: var(--success); }
+      .override-toggle.active .rule-circle { border-color: var(--success); background: rgba(46, 204, 113, 0.1); }
+      .override-toggle.active .rule-circle i { opacity: 1; transform: scale(1); color: var(--success); }
+
+      /* ---------------------------------------------------- */
       /* BOTÓN GUARDAR (ESTADOS INACTIVO / ACTIVO)            */
       /* ---------------------------------------------------- */
       .btn-save-profile {
         width: 100%; padding: 12px; margin-top: 5px;
-        background: transparent; 
-        border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; 
+        background: transparent; border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; 
         color: rgba(255,255,255,0.4); font-size: 1rem; font-weight: 600; 
-        box-shadow: none; cursor: not-allowed;
-        transition: all 0.4s ease;
+        box-shadow: none; cursor: not-allowed; transition: all 0.4s ease;
       }
       
       .btn-save-profile.active {
-        background: linear-gradient(45deg, var(--accent), #6c5ce7); 
-        border-color: rgba(255,255,255,0.3); 
-        color: white; 
-        box-shadow: 0 4px 15px rgba(168, 19, 183, 0.4); 
-        cursor: pointer;
+        background: linear-gradient(45deg, var(--accent), #6c5ce7); border-color: rgba(255,255,255,0.3); 
+        color: white; box-shadow: 0 4px 15px rgba(168, 19, 183, 0.4); cursor: pointer;
       }
 
       /* ---------------------------------------------------- */
-      /* ESTRUCTURA GRID PARA MODALES AMPLIOS Y SELECTORES    */
+      /* ESTRUCTURA GRID PARA MODALES AMPLIOS                 */
       /* ---------------------------------------------------- */
       .form-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 15px;
+        display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;
       }
 
       /* Menú Desplegable Selector */
-      .custom-dropdown-container {
-        position: relative; width: 100%;
-      }
+      .custom-dropdown-container { position: relative; width: 100%; }
       .custom-dropdown-btn {
         width: 100%; padding: 12px 15px; margin: 8px 0 20px;
         border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 12px;
@@ -465,7 +457,7 @@
       .custom-dropdown-btn:hover { border: 1px solid var(--accent); background: rgba(0, 0, 0, 0.4); }
       
       .custom-dropdown-menu {
-        display: none; position: absolute; top: calc(100% - 15px); left: 0; width: 100%;
+        display: none; position: absolute; top: calc(100% + 5px); left: 0; width: 100%; /* Arreglo solapamiento */
         background: rgba(20, 20, 20, 0.95); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
         border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 12px;
         padding: 8px; z-index: 1001; box-shadow: 0 10px 30px rgba(0,0,0,0.6);
@@ -476,16 +468,13 @@
         text-align: center; color: rgba(255,255,255,0.5); font-size: 0.85rem; padding: 10px;
       }
       
-      /* Botón de Agregar Perfil en el Dropdown */
       .add-profile-inline-btn {
         width: 100%; display: flex; justify-content: space-between; align-items: center;
         padding: 10px 15px; background: transparent; border: none; border-radius: 8px;
-        color: rgba(255,255,255,0.6); font-size: 0.9rem; cursor: pointer;
-        transition: all 0.3s ease;
+        color: rgba(255,255,255,0.6); font-size: 0.9rem; cursor: pointer; transition: all 0.3s ease;
       }
       .add-profile-inline-btn:hover {
-        background: rgba(46, 204, 113, 0.35); /* Verde con opacidad */
-        color: var(--success); /* Verde al 100% */
+        background: rgba(46, 204, 113, 0.35); color: var(--success);
       }
       .add-profile-inline-btn span.plus-icon { font-size: 1.2rem; font-weight: 600; }
 
@@ -677,24 +666,18 @@
     <!-- ============================================== -->
     <div class="fab-container" id="fab-container">
       
-      <!-- Menú Desplegable con flex-direction: column-reverse para apilamiento natural -->
       <div class="fab-menu">
-        
-        <!-- Ítem 1: Crear Perfil (Aparece abajo, primero en el DOM) -->
         <div class="fab-item glass-purple" onclick="abrirModalPerfil()">
           <i class="fas fa-user"></i>
           <div class="fab-label glass-purple" onclick="abrirModalPerfil()">Crear perfil</div>
         </div>
 
-        <!-- Ítem 2: Parametrizar Contrato (Aparece arriba, segundo en el DOM) -->
         <div class="fab-item glass-purple" onclick="abrirModalContrato()">
           <i class="fas fa-file-contract"></i>
           <div class="fab-label glass-purple" onclick="abrirModalContrato()">Parametrizar contrato</div>
         </div>
-
       </div>
       
-      <!-- Botón Principal (+) -->
       <div class="fab glass-purple" onclick="toggleFabMenu()">
         <i class="fas fa-plus"></i>
       </div>
@@ -787,70 +770,85 @@
              onclick="cerrarModalContrato()" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'"></i>
         </div>
 
-        <div style="margin-bottom: 20px;">
+        <div style="margin-bottom: 25px;">
+          <!-- Botonera Acción -->
           <div style="display: flex; gap: 8px;">
-            <button class="role-btn active" onclick="seleccionarRolContrato(this)">Generar contrato</button>
-            <button class="role-btn" onclick="seleccionarRolContrato(this)">Cargar contrato</button>
+            <button class="role-btn active" onclick="seleccionarAccionContrato(this)">Generar contrato</button>
+            <button class="role-btn" onclick="seleccionarAccionContrato(this)">Cargar contrato</button>
+          </div>
+          <!-- Botonera Tipo Contrato -->
+          <div style="display: flex; gap: 8px; margin-top: 10px;">
+            <button class="role-btn active" onclick="seleccionarTipoContrato(this, 'ordinal')">Contrato ordinal</button>
+            <button class="role-btn" onclick="seleccionarTipoContrato(this, 'familiar')">Contrato familiar</button>
           </div>
         </div>
         
         <!-- Formulario en Grid adaptable -->
         <div class="form-grid">
           
-          <!-- Ocupa las dos columnas si hay espacio -->
           <div style="grid-column: 1 / -1;">
             <label style="font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-left: 5px; font-weight: 600;">Arrendatario / Inquilino</label>
             
-            <!-- CONTENEDOR DEL SELECTOR DESPLEGABLE -->
             <div class="custom-dropdown-container" id="dropdown-arrendatario-container">
-              <!-- Botón que muestra la selección actual -->
-              <button class="custom-dropdown-btn" onclick="toggleDropdownArrendatario(event)">
+              <button class="custom-dropdown-btn" style="margin-bottom: 0;" onclick="toggleDropdownArrendatario(event)">
                 <span id="selected-arrendatario-text">Seleccionar perfil existente...</span>
                 <i class="fas fa-chevron-down" style="font-size: 0.8rem; opacity: 0.7;"></i>
               </button>
               
-              <!-- El menú oculto -->
               <div class="custom-dropdown-menu">
-                <!-- Mensaje cuando la base de datos (simulada) esté vacía -->
-                <div class="dropdown-empty-msg">
+                <div class="dropdown-empty-msg" id="msg-dropdown-perfiles">
                   No se encontraron perfiles activos para parametrizar.
                 </div>
                 
-                <!-- Botón de acción para crear nuevo perfil -->
                 <button class="add-profile-inline-btn" onclick="transicionCrearPerfil(event)">
                   <span>Agregar nuevo perfil</span>
                   <span class="plus-icon">+</span>
                 </button>
               </div>
             </div>
-            <!-- FIN SELECTOR -->
-            
           </div>
           
-          <div>
+          <div style="display: flex; flex-direction: column;">
             <label style="font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-left: 5px; font-weight: 600;">Canon Base ($)</label>
-            <input type="number" placeholder="$ 0" class="modal-input">
+            <input type="number" id="input-canon" placeholder="$ 0" class="modal-input" style="margin-bottom: 0;">
+            <div class="override-toggle" id="toggle-canon" onclick="toggleFieldOverride('input-canon', 'toggle-canon')">
+              <div class="rule-circle"><i class="fas fa-check"></i></div>
+              <span>Eximido</span>
+            </div>
           </div>
           
-          <div>
+          <div style="display: flex; flex-direction: column;">
             <label style="font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-left: 5px; font-weight: 600;">Día de Corte/Pago</label>
-            <input type="number" placeholder="Ej: 5" min="1" max="31" class="modal-input">
+            <input type="number" id="input-dia-pago" placeholder="Ej: 5" min="1" max="31" class="modal-input" style="margin-bottom: 0;">
+            <div class="override-toggle" id="toggle-dia" onclick="toggleFieldOverride('input-dia-pago', 'toggle-dia')">
+              <div class="rule-circle"><i class="fas fa-check"></i></div>
+              <span>A beneficio</span>
+            </div>
           </div>
           
-          <div>
+          <div style="display: flex; flex-direction: column;">
             <label style="font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-left: 5px; font-weight: 600;">Fecha de Inicio</label>
-            <input type="date" class="modal-input" style="color: rgba(255,255,255,0.7);">
+            <input type="date" class="modal-input" style="color: rgba(255,255,255,0.7); margin-bottom: 15px;">
+            <!-- Sin botón de exención según requerimiento -->
           </div>
           
-          <div>
+          <div style="display: flex; flex-direction: column;">
             <label style="font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-left: 5px; font-weight: 600;">Fecha de Vencimiento</label>
-            <input type="date" class="modal-input" style="color: rgba(255,255,255,0.7);">
+            <input type="date" id="input-vencimiento" class="modal-input" style="color: rgba(255,255,255,0.7); margin-bottom: 0;">
+            <div class="override-toggle" id="toggle-vencimiento" onclick="toggleFieldOverride('input-vencimiento', 'toggle-vencimiento')">
+              <div class="rule-circle"><i class="fas fa-check"></i></div>
+              <span>Indefinido</span>
+            </div>
+          </div>
+
+          <div style="grid-column: 1 / -1;">
+            <label style="font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-left: 5px; font-weight: 600;">Observaciones</label>
+            <textarea maxlength="2000" placeholder="Escribe aquí las observaciones del contrato..." class="modal-input" style="resize: vertical; min-height: 80px;"></textarea>
           </div>
 
         </div>
         
-        <!-- Botón de Guardar Contrato (Inactivo por defecto) -->
-        <button id="btn-guardar-contrato" class="btn-save-profile" style="margin-top: 15px;" onclick="guardarContrato()">
+        <button id="btn-guardar-contrato" class="btn-save-profile active" style="margin-top: 5px;" onclick="guardarContrato()">
           Guardar Contrato
         </button>
 
@@ -961,7 +959,6 @@
       function abrirModalContrato() {
         document.getElementById('fab-container').classList.remove('active');
         
-        // Reset dropdown
         const dropdownContainer = document.getElementById('dropdown-arrendatario-container');
         dropdownContainer.classList.remove('open');
         
@@ -973,7 +970,6 @@
       function cerrarModalContrato() {
         const modal = document.getElementById('modal-contrato');
         modal.classList.remove('active');
-        // Nos aseguramos de quitar la clase de transición especial por si se usó
         modal.classList.remove('transition-no-blur'); 
         setTimeout(() => modal.style.display = 'none', 300);
       }
@@ -992,10 +988,41 @@
         btn.classList.add('active');
       }
 
-      function seleccionarRolContrato(btn) {
+      function seleccionarAccionContrato(btn) {
         const botones = btn.parentElement.querySelectorAll('.role-btn');
         botones.forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
+      }
+
+      function seleccionarTipoContrato(btn, tipo) {
+        const botones = btn.parentElement.querySelectorAll('.role-btn');
+        botones.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        
+        // Cambiar el mensaje del menú desplegable según el tipo
+        const msgDiv = document.getElementById('msg-dropdown-perfiles');
+        if(tipo === 'familiar') {
+            msgDiv.innerText = "No se encontraron perfiles de Colaborador o Integrante activos.";
+        } else {
+            msgDiv.innerText = "No se encontraron perfiles activos para parametrizar.";
+        }
+      }
+
+      // Animación e inhabilitación de campos de contrato
+      function toggleFieldOverride(inputId, toggleId) {
+        const input = document.getElementById(inputId);
+        const toggle = document.getElementById(toggleId);
+        
+        toggle.classList.toggle('active');
+        
+        if (toggle.classList.contains('active')) {
+            // Se activó el botón de exención
+            input.value = '';
+            input.disabled = true;
+        } else {
+            // Se desactivó el botón de exención
+            input.disabled = false;
+        }
       }
 
       function capitalizarNombres(input) {
@@ -1110,13 +1137,11 @@
       // --- Funciones exclusivas del Modal Contrato ---
 
       function toggleDropdownArrendatario(event) {
-        // Prevenir que el clic se propague y cierre el dropdown inmediatamente
         event.stopPropagation(); 
         const container = document.getElementById('dropdown-arrendatario-container');
         container.classList.toggle('open');
       }
 
-      // Cerrar dropdown si se hace clic fuera de él
       document.addEventListener('click', function(event) {
         const container = document.getElementById('dropdown-arrendatario-container');
         if (container && container.classList.contains('open') && !container.contains(event.target)) {
@@ -1124,36 +1149,25 @@
         }
       });
 
-      // Transición inteligente: De Parametrizar a Crear Perfil sin blur
       function transicionCrearPerfil(event) {
-        event.stopPropagation(); // Evitar cerrar el modal de contrato bruscamente
+        event.stopPropagation(); 
         
         const modalContrato = document.getElementById('modal-contrato');
-        
-        // 1. Desactivamos el efecto blur para esta transición específica
         modalContrato.classList.add('transition-no-blur');
-        
-        // 2. Ocultamos visualmente el modal de contrato
         modalContrato.classList.remove('active');
         
-        // 3. Abrimos el modal de perfil de inmediato
         const modalPerfil = document.getElementById('modal-perfil');
         modalPerfil.style.display = 'flex'; 
         
-        // Limpiamos los campos del modal de perfil antes de que aparezca
         document.getElementById('input-nombre-perfil').value = '';
         document.getElementById('input-password-perfil').value = '';
         validarFormularioPerfil();
         
-        // 4. Completamos la transición (limpiando el contrato del DOM en segundo plano)
         setTimeout(() => {
             modalContrato.style.display = 'none';
-            // Devolvemos el comportamiento normal de blur para la próxima vez que se abra
             modalContrato.classList.remove('transition-no-blur'); 
-            
-            // Animamos la entrada del modal de perfil
             modalPerfil.classList.add('active');
-        }, 300); // 300ms coincide con la transición CSS
+        }, 300); 
       }
 
       function guardarContrato() {
