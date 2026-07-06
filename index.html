@@ -332,7 +332,7 @@
       .modal-overlay.active .modal-glass { transform: translateY(0) scale(1); }
 
       .modal-input {
-        width: 100%; padding: 12px 15px; margin: 8px 0 20px;
+        width: 100%; padding: 12px 15px; margin: 8px 0; /* Eliminado margen inferior excesivo */
         border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 12px;
         background: rgba(0, 0, 0, 0.3); color: white;
         font-size: 0.95rem; transition: border 0.3s ease, background 0.3s ease, opacity 0.3s ease;
@@ -356,17 +356,17 @@
         box-shadow: 0 4px 15px rgba(168, 19, 183, 0.4);
       }
 
-      /* Botoneras Outline (Como Borde para Contrato Ordinal/Familiar) */
+      /* --- NUEVO: Botoneras Outline (Como Borde Fuerte para Contratos) --- */
       .role-btn-outline {
         flex: 1; padding: 10px 5px; font-size: 0.75rem; font-weight: 600;
-        border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.2);
-        background: transparent; color: rgba(255, 255, 255, 0.7);
+        border-radius: 12px; border: 2px solid rgba(255, 255, 255, 0.2);
+        background: transparent !important; color: rgba(255, 255, 255, 0.7);
         cursor: pointer; transition: all 0.3s ease;
       }
       .role-btn-outline.active {
-        background: rgba(168, 19, 183, 0.05); /* Tinte súper suave */
-        color: white; border-color: var(--accent);
-        box-shadow: 0 0 15px rgba(168, 19, 183, 0.4), inset 0 0 10px rgba(168, 19, 183, 0.2);
+        border-color: var(--accent); /* Borde morado brillante */
+        color: white;
+        box-shadow: 0 0 15px rgba(168, 19, 183, 0.5); /* Resplandor neón exterior */
       }
 
       /* ---------------------------------------------------- */
@@ -413,7 +413,7 @@
       /* ---------------------------------------------------- */
       /* INDICADORES DE SEGURIDAD                             */
       /* ---------------------------------------------------- */
-      .pwd-rules { display: flex; flex-direction: column; gap: 6px; margin-bottom: 25px; padding-left: 5px; }
+      .pwd-rules { display: flex; flex-direction: column; gap: 6px; margin-bottom: 25px; padding-left: 5px; margin-top: 10px; }
       .pwd-rule { display: flex; align-items: center; gap: 8px; color: rgba(255,255,255,0.4); font-size: 0.75rem; transition: color 0.4s ease; }
       .rule-circle {
         width: 14px; height: 14px; min-width: 14px; border-radius: 50%; 
@@ -428,10 +428,11 @@
       /* ---------------------------------------------------- */
       /* BOTONES DE EXENCIÓN EN MODAL CONTRATO                */
       /* ---------------------------------------------------- */
+      /* CORRECCIÓN DE SOLAPAMIENTO: Margen top positivo para aislar la viñeta */
       .override-toggle {
         display: inline-flex; align-items: center; gap: 8px; 
-        margin-top: 6px; margin-bottom: 10px; margin-left: 5px; /* Corrección de solapamiento */
-        color: rgba(255,255,255,0.4); font-size: 0.75rem; cursor: pointer; transition: color 0.3s ease;
+        margin-top: 10px; margin-bottom: 15px; margin-left: 5px; 
+        color: rgba(255,255,255,0.4); font-size: 0.8rem; cursor: pointer; transition: color 0.3s ease;
       }
       .override-toggle.active { color: var(--success); }
       .override-toggle.active .rule-circle { border-color: var(--success); background: rgba(46, 204, 113, 0.1); }
@@ -456,13 +457,13 @@
       /* ESTRUCTURA GRID PARA MODALES AMPLIOS                 */
       /* ---------------------------------------------------- */
       .form-grid {
-        display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;
+        display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 15px;
       }
 
       /* Menú Desplegable Selector */
       .custom-dropdown-container { position: relative; width: 100%; }
       .custom-dropdown-btn {
-        width: 100%; padding: 12px 15px; margin: 8px 0 20px;
+        width: 100%; padding: 12px 15px; margin: 8px 0;
         border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 12px;
         background: rgba(0, 0, 0, 0.3); color: white; text-align: left;
         font-size: 0.95rem; cursor: pointer; transition: border 0.3s ease, background 0.3s ease;
@@ -471,7 +472,7 @@
       .custom-dropdown-btn:hover { border: 1px solid var(--accent); background: rgba(0, 0, 0, 0.4); }
       
       .custom-dropdown-menu {
-        display: none; position: absolute; top: calc(100% + 5px); left: 0; width: 100%; /* Arreglo solapamiento */
+        display: none; position: absolute; top: calc(100% + 5px); left: 0; width: 100%; 
         background: rgba(20, 20, 20, 0.95); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
         border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 12px;
         padding: 8px; z-index: 1001; box-shadow: 0 10px 30px rgba(0,0,0,0.6);
@@ -790,7 +791,7 @@
             <button class="role-btn active" onclick="seleccionarAccionContrato(this)">Generar contrato</button>
             <button class="role-btn" onclick="seleccionarAccionContrato(this)">Cargar contrato</button>
           </div>
-          <!-- Botonera Tipo Contrato (Diseño Borde/Outline) -->
+          <!-- Botonera Tipo Contrato (Diseño Borde Fuerte/Outline) -->
           <div style="display: flex; gap: 8px; margin-top: 10px;">
             <button class="role-btn-outline active" onclick="seleccionarTipoContrato(this, 'ordinal')">Contrato ordinal</button>
             <button class="role-btn-outline" onclick="seleccionarTipoContrato(this, 'familiar')">Contrato familiar</button>
