@@ -162,10 +162,10 @@
       }
 
       .grid-layout {
-        display: grid; gap: 20px; grid-template-columns: repeat(4, minmax(0, 1fr)); width: 100%; align-content: start;
+        display: grid; gap: 20px; grid-template-columns: repeat(3, minmax(0, 1fr)); width: 100%; align-content: start;
       }
 
-      .quarter-width { grid-column: span 1; }
+      .third-width { grid-column: span 1; }
       .half-width { grid-column: span 2; }
       .full-width { grid-column: 1 / -1; }
 
@@ -505,7 +505,7 @@
         .sidebar:hover { width: 100%; } 
         .main-content { padding: 20px 20px 90px 20px; }
         .grid-layout { grid-template-columns: 1fr; }
-        .quarter-width, .half-width, .full-width { grid-column: 1 / -1; }
+        .third-width, .half-width, .full-width { grid-column: 1 / -1; }
         .logo, .menu-text { display: none; }
         .menu-item { width: auto; margin: 0; padding: 10px; flex-direction: column; }
         .menu-item-icon { width: auto; min-width: auto; }
@@ -592,7 +592,7 @@
           </div>
         </div>
 
-        <div class="kpi-card glass quarter-width">
+        <div class="kpi-card glass third-width" style="order: 1;">
           <div>
             <div class="kpi-title"><i class="fas fa-arrow-down" style="color: var(--danger)"></i> Gastos</div>
             <div class="kpi-trend" style="color: var(--danger)">+5% vs mes ant.</div>
@@ -600,7 +600,15 @@
           <div class="kpi-value">$1,250</div>
         </div>
 
-        <div class="kpi-card glass quarter-width">
+        <div class="kpi-card glass third-width" style="order: 2; border-color: var(--accent); background: linear-gradient(135deg, rgba(168, 19, 183, 0.3) 0%, rgba(168, 19, 183, 0.05) 100%);">
+          <div>
+            <div class="kpi-title" style="color: var(--text-dark);"><i class="fas fa-wallet" style="color: var(--accent);"></i> Saldo</div>
+            <div class="kpi-trend" style="color: var(--text-light)">Disponible</div>
+          </div>
+          <div class="kpi-value" style="color: var(--text-dark)">$1,550</div>
+        </div>
+        
+        <div class="kpi-card glass third-width" style="order: 3;">
           <div>
             <div class="kpi-title"><i class="fas fa-arrow-up" style="color: var(--success)"></i> Ingresos</div>
             <div class="kpi-trend" style="color: var(--success)">Estable</div>
@@ -608,20 +616,7 @@
           <div class="kpi-value">$2,800</div>
         </div>
 
-        <div class="kpi-card glass quarter-width" style="border-color: var(--accent); background: linear-gradient(135deg, rgba(168, 19, 183, 0.3) 0%, rgba(168, 19, 183, 0.05) 100%);">
-          <div>
-            <div class="kpi-title" style="color: var(--text-dark);"><i class="fas fa-wallet" style="color: var(--accent);"></i> Saldo</div>
-            <div class="kpi-trend" style="color: var(--text-light)">Disponible</div>
-          </div>
-          <div class="kpi-value" style="color: var(--text-dark)">$1,550</div>
-        </div>
-
-        <div class="kpi-card glass quarter-width" style="justify-content: center; align-items: center; cursor: pointer;" onclick="alert('Copia guardada en la nube ✅')">
-          <i class="fas fa-cloud-upload-alt" style="font-size: 1.8rem; color: var(--accent);"></i>
-          <div style="font-size: 0.8rem; margin-top: 5px; font-weight: 600; color: var(--text-light);">Respaldar</div>
-        </div>
-
-        <div class="glass half-width table-card">
+        <div class="glass full-width table-card" style="order: 4;">
           <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
             <h3 style="font-size: 1rem; color:var(--text-dark);">Últimos Movimientos</h3>
             <span style="font-size: 0.8rem; color: var(--accent); cursor: pointer;">Ver todo</span>
