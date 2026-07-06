@@ -297,9 +297,15 @@
         backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
         z-index: 1000;
         display: none; align-items: center; justify-content: center;
-        opacity: 0; transition: opacity 0.3s ease;
+        opacity: 0; transition: opacity 0.3s ease, backdrop-filter 0.3s ease;
       }
       .modal-overlay.active { opacity: 1; }
+      
+      /* Clase para eliminar el blur durante la transición entre modales */
+      .modal-overlay.transition-no-blur {
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+      }
       
       .modal-glass {
         background: linear-gradient(135deg, rgba(20, 20, 20, 0.85) 0%, rgba(20, 20, 20, 0.4) 100%);
@@ -332,7 +338,7 @@
       .modal-input:focus { border: 1px solid var(--accent); background: rgba(0, 0, 0, 0.5); }
       .modal-input::placeholder { color: rgba(255, 255, 255, 0.4); }
 
-      /* Estilos para la botonera de roles */
+      /* Estilos para la botonera de roles y contratos */
       .role-btn {
         flex: 1; padding: 10px 5px; font-size: 0.75rem; font-weight: 600;
         border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.2);
@@ -437,13 +443,51 @@
       }
 
       /* ---------------------------------------------------- */
-      /* ESTRUCTURA GRID PARA MODALES AMPLIOS                 */
+      /* ESTRUCTURA GRID PARA MODALES AMPLIOS Y SELECTORES    */
       /* ---------------------------------------------------- */
       .form-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
         gap: 15px;
       }
+
+      /* Menú Desplegable Selector */
+      .custom-dropdown-container {
+        position: relative; width: 100%;
+      }
+      .custom-dropdown-btn {
+        width: 100%; padding: 12px 15px; margin: 8px 0 20px;
+        border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 12px;
+        background: rgba(0, 0, 0, 0.3); color: white; text-align: left;
+        font-size: 0.95rem; cursor: pointer; transition: border 0.3s ease, background 0.3s ease;
+        display: flex; justify-content: space-between; align-items: center;
+      }
+      .custom-dropdown-btn:hover { border: 1px solid var(--accent); background: rgba(0, 0, 0, 0.4); }
+      
+      .custom-dropdown-menu {
+        display: none; position: absolute; top: calc(100% - 15px); left: 0; width: 100%;
+        background: rgba(20, 20, 20, 0.95); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 12px;
+        padding: 8px; z-index: 1001; box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+      }
+      .custom-dropdown-container.open .custom-dropdown-menu { display: block; }
+      
+      .dropdown-empty-msg {
+        text-align: center; color: rgba(255,255,255,0.5); font-size: 0.85rem; padding: 10px;
+      }
+      
+      /* Botón de Agregar Perfil en el Dropdown */
+      .add-profile-inline-btn {
+        width: 100%; display: flex; justify-content: space-between; align-items: center;
+        padding: 10px 15px; background: transparent; border: none; border-radius: 8px;
+        color: rgba(255,255,255,0.6); font-size: 0.9rem; cursor: pointer;
+        transition: all 0.3s ease;
+      }
+      .add-profile-inline-btn:hover {
+        background: rgba(46, 204, 113, 0.35); /* Verde con opacidad */
+        color: var(--success); /* Verde al 100% */
+      }
+      .add-profile-inline-btn span.plus-icon { font-size: 1.2rem; font-weight: 600; }
 
       /* --- MÓVIL RESPONSIVE --- */
       @media (max-width: 768px) {
@@ -742,6 +786,13 @@
           <i class="fas fa-times" style="cursor: pointer; font-size: 1.3rem; opacity: 0.7; transition: 0.2s;" 
              onclick="cerrarModalContrato()" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'"></i>
         </div>
+
+        <div style="margin-bottom: 20px;">
+          <div style="display: flex; gap: 8px;">
+            <button class="role-btn active" onclick="seleccionarRolContrato(this)">Generar contrato</button>
+            <button class="role-btn" onclick="seleccionarRolContrato(this)">Cargar contrato</button>
+          </div>
+        </div>
         
         <!-- Formulario en Grid adaptable -->
         <div class="form-grid">
@@ -749,7 +800,31 @@
           <!-- Ocupa las dos columnas si hay espacio -->
           <div style="grid-column: 1 / -1;">
             <label style="font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-left: 5px; font-weight: 600;">Arrendatario / Inquilino</label>
-            <input type="text" placeholder="Seleccionar perfil existente" class="modal-input">
+            
+            <!-- CONTENEDOR DEL SELECTOR DESPLEGABLE -->
+            <div class="custom-dropdown-container" id="dropdown-arrendatario-container">
+              <!-- Botón que muestra la selección actual -->
+              <button class="custom-dropdown-btn" onclick="toggleDropdownArrendatario(event)">
+                <span id="selected-arrendatario-text">Seleccionar perfil existente...</span>
+                <i class="fas fa-chevron-down" style="font-size: 0.8rem; opacity: 0.7;"></i>
+              </button>
+              
+              <!-- El menú oculto -->
+              <div class="custom-dropdown-menu">
+                <!-- Mensaje cuando la base de datos (simulada) esté vacía -->
+                <div class="dropdown-empty-msg">
+                  No se encontraron perfiles activos para parametrizar.
+                </div>
+                
+                <!-- Botón de acción para crear nuevo perfil -->
+                <button class="add-profile-inline-btn" onclick="transicionCrearPerfil(event)">
+                  <span>Agregar nuevo perfil</span>
+                  <span class="plus-icon">+</span>
+                </button>
+              </div>
+            </div>
+            <!-- FIN SELECTOR -->
+            
           </div>
           
           <div>
@@ -774,8 +849,8 @@
 
         </div>
         
-        <!-- Botón estático por ahora para contratos -->
-        <button class="btn-save-profile active" style="margin-top: 15px;" onclick="cerrarModalContrato()">
+        <!-- Botón de Guardar Contrato (Inactivo por defecto) -->
+        <button id="btn-guardar-contrato" class="btn-save-profile" style="margin-top: 15px;" onclick="guardarContrato()">
           Guardar Contrato
         </button>
 
@@ -883,9 +958,12 @@
         setTimeout(() => modal.style.display = 'none', 300);
       }
 
-      // Funciones del Modal Contrato
       function abrirModalContrato() {
         document.getElementById('fab-container').classList.remove('active');
+        
+        // Reset dropdown
+        const dropdownContainer = document.getElementById('dropdown-arrendatario-container');
+        dropdownContainer.classList.remove('open');
         
         const modal = document.getElementById('modal-contrato');
         modal.style.display = 'flex'; 
@@ -895,6 +973,8 @@
       function cerrarModalContrato() {
         const modal = document.getElementById('modal-contrato');
         modal.classList.remove('active');
+        // Nos aseguramos de quitar la clase de transición especial por si se usó
+        modal.classList.remove('transition-no-blur'); 
         setTimeout(() => modal.style.display = 'none', 300);
       }
 
@@ -907,6 +987,12 @@
       }
       
       function seleccionarRol(btn) {
+        const botones = btn.parentElement.querySelectorAll('.role-btn');
+        botones.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+      }
+
+      function seleccionarRolContrato(btn) {
         const botones = btn.parentElement.querySelectorAll('.role-btn');
         botones.forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
@@ -1019,6 +1105,63 @@
         
         validarFormularioPerfil();
         copiarAlPortapapeles(pwd);
+      }
+
+      // --- Funciones exclusivas del Modal Contrato ---
+
+      function toggleDropdownArrendatario(event) {
+        // Prevenir que el clic se propague y cierre el dropdown inmediatamente
+        event.stopPropagation(); 
+        const container = document.getElementById('dropdown-arrendatario-container');
+        container.classList.toggle('open');
+      }
+
+      // Cerrar dropdown si se hace clic fuera de él
+      document.addEventListener('click', function(event) {
+        const container = document.getElementById('dropdown-arrendatario-container');
+        if (container && container.classList.contains('open') && !container.contains(event.target)) {
+          container.classList.remove('open');
+        }
+      });
+
+      // Transición inteligente: De Parametrizar a Crear Perfil sin blur
+      function transicionCrearPerfil(event) {
+        event.stopPropagation(); // Evitar cerrar el modal de contrato bruscamente
+        
+        const modalContrato = document.getElementById('modal-contrato');
+        
+        // 1. Desactivamos el efecto blur para esta transición específica
+        modalContrato.classList.add('transition-no-blur');
+        
+        // 2. Ocultamos visualmente el modal de contrato
+        modalContrato.classList.remove('active');
+        
+        // 3. Abrimos el modal de perfil de inmediato
+        const modalPerfil = document.getElementById('modal-perfil');
+        modalPerfil.style.display = 'flex'; 
+        
+        // Limpiamos los campos del modal de perfil antes de que aparezca
+        document.getElementById('input-nombre-perfil').value = '';
+        document.getElementById('input-password-perfil').value = '';
+        validarFormularioPerfil();
+        
+        // 4. Completamos la transición (limpiando el contrato del DOM en segundo plano)
+        setTimeout(() => {
+            modalContrato.style.display = 'none';
+            // Devolvemos el comportamiento normal de blur para la próxima vez que se abra
+            modalContrato.classList.remove('transition-no-blur'); 
+            
+            // Animamos la entrada del modal de perfil
+            modalPerfil.classList.add('active');
+        }, 300); // 300ms coincide con la transición CSS
+      }
+
+      function guardarContrato() {
+        const btn = document.getElementById('btn-guardar-contrato');
+        if (btn.classList.contains('active')) {
+          cerrarModalContrato();
+          alert('¡Contrato parametrizado con éxito!');
+        }
       }
     </script>
   </body>
