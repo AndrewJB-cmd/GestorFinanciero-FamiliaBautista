@@ -300,9 +300,6 @@
       if (vistaId === 'dashboard' || vistaId === 'balance-persona') {
         const resumenBtn = document.getElementById('btn-resumen');
         if (resumenBtn) resumenBtn.classList.add('active');
-        submenu.style.display = 'flex';
-      } else {
-        submenu.style.display = 'none';
       }
     }
 
