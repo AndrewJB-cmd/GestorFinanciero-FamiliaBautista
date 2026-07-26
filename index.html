@@ -11,6 +11,8 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <link href="css/style.css" rel="stylesheet">
+    <!-- Apps Script no sirve archivos relativos; este include conserva la separación al desplegar. -->
+    <style><?!= include('css/style.css'); ?></style>
 
   </head>
   <body>
@@ -428,6 +430,8 @@
 
     <!-- SCRIPTS -->
     <script src="js/ui.js"></script>
+    <!-- Apps Script no sirve archivos relativos; este include conserva la separación al desplegar. -->
+    <script><?!= include('js/ui.js'); ?></script>
 
   </body>
 </html>
