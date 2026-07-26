@@ -112,16 +112,30 @@ body.light-mode::before { transform: scale(0.5); }
 .sidebar:hover .menu-text { opacity: 1; width: auto; padding-right: 15px; }
 .menu-item:hover, .menu-item.active { background: rgba(168, 19, 183, 0.2); color: var(--text-dark); font-weight: 600; }
 
-.menu-chevron {
-  font-size: 0.7rem;
-  margin-left: 8px;
+.menu-ellipsis {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  min-width: 24px;
+  margin-left: auto;
+  margin-right: 12px;
+  font-size: 0.85rem;
+  line-height: 1;
   opacity: 0;
-  transform: rotate(0deg);
-  transition: opacity 0.25s ease, transform 0.3s ease, color 0.2s ease;
+  transform: scale(0.9);
+  transition: opacity 0.25s ease, transform 0.25s ease, color 0.2s ease;
+  color: var(--text-light);
+}
+
+.sidebar:hover .menu-ellipsis { opacity: 1; }
+.submenu-container.open .menu-ellipsis {
+  opacity: 1;
+  transform: scale(1);
+  color: var(--text-dark);
 }
 
 .submenu-container { width: 100%; display: flex; flex-direction: column; }
-.submenu-container.open .menu-chevron { opacity: 1; transform: rotate(180deg); }
 .submenu {
   display: flex;
   flex-direction: column;
@@ -297,7 +311,18 @@ body.light-mode .page-header {
   transition: background 0.8s ease, border 0.8s ease, box-shadow 0.8s ease;
 }
 
-.date-badge { background: rgba(128,128,128,0.2); padding: 6px 16px; border-radius: 20px; font-size: 0.9rem; border: 1px solid var(--glass-border); color: var(--text-dark); font-weight: 500; }
+.date-badge {
+  background: rgba(128,128,128,0.2);
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  border: 1px solid var(--glass-border);
+  color: var(--text-dark);
+  font-weight: 500;
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: default;
+}
 .kpi-card { padding: 20px; display: flex; flex-direction: column; justify-content: space-between; height: 130px; }
 .kpi-title { font-size: 0.85rem; color: var(--text-light); display: flex; align-items: center; gap: 8px; }
 .kpi-value { font-size: 1.6rem; font-weight: 700; margin-top: 5px; color: var(--text-dark); }
