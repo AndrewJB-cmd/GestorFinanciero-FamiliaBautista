@@ -553,12 +553,15 @@
       
       <!-- GRUPO RESUMEN CON SUBMENÚ -->
       <div class="submenu-container">
-        <div class="menu-item active" id="btn-resumen" onclick="toggleSubmenu(true)">
+        <div class="menu-item active" id="btn-resumen" onclick="toggleSubmenu()">
           <i class="fas fa-chart-pie menu-item-icon"></i>
-          <span class="menu-text">Resumen <i class="fas fa-chevron-down" style="font-size: 0.7rem; margin-left: 8px;"></i></span>
+          <span class="menu-text">
+            Resumen
+            <i class="fas fa-chevron-down menu-chevron"></i>
+          </span>
         </div>
         
-        <div class="submenu" id="submenu-resumen" style="display: flex;">
+        <div class="submenu" id="submenu-resumen">
           <div class="submenu-item active" id="btn-sub-general" onclick="cambiarVista('dashboard', this)">
             <i class="fas fa-wallet submenu-icon"></i>
             <span class="menu-text">Balance general</span>

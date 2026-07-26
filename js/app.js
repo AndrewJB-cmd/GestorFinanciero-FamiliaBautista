@@ -125,7 +125,10 @@
       if (part.type === 'year') anio = part.value;
       if (part.type === 'hour') hora = part.value;
       if (part.type === 'minute') minuto = part.value;
-      if (part.type === 'dayPeriod') ampm = part.value.toLowerCase().replace(/\./g, '').trim();
+      if (part.type === 'dayPeriod') {
+        const normalized = part.value.toLowerCase();
+        ampm = normalized.includes('a') ? 'a.m.' : normalized.includes('p') ? 'p.m.' : part.value;
+      }
     }
 
     const target = document.getElementById('fecha-hoy');
@@ -270,7 +273,15 @@
     initCharts();
   }
 
+  function closeSubmenu() {
+    const submenu = document.getElementById('submenu-resumen');
+    const container = submenu?.parentElement;
+    if (submenu) submenu.classList.remove('open');
+    if (container) container.classList.remove('open');
+  }
+
   function cambiarVista(vistaId, elementoMenu) {
+    closeSubmenu();
     state.currentView = vistaId;
     updateHeaderContent(vistaId);
     ['view-dashboard', 'view-balance-persona', 'view-arriendo', 'view-herramientas'].forEach((id) => {
@@ -301,12 +312,16 @@
 
   function toggleSubmenu(forzarApertura = false) {
     const submenu = document.getElementById('submenu-resumen');
+    const container = submenu?.parentElement;
     if (!submenu) return;
-    if (submenu.style.display === 'none' || forzarApertura) {
-      submenu.style.display = 'flex';
-      cambiarVista('dashboard', document.getElementById('btn-sub-general'));
+
+    const shouldOpen = forzarApertura || !submenu.classList.contains('open');
+    if (shouldOpen) {
+      submenu.classList.add('open');
+      if (container) container.classList.add('open');
     } else {
-      submenu.style.display = 'none';
+      submenu.classList.remove('open');
+      if (container) container.classList.remove('open');
     }
   }
 
