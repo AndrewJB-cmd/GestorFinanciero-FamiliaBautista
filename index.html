@@ -4,560 +4,33 @@
     <base target="_top">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Finanzas Familiares</title>
-    
+
     <!-- Librerías Externas -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <style>
-      :root {
-        /* --- PALETA DARK MODE (Liquid Glass Extremo) --- */
-        --glass-bg: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.01) 100%); 
-        --glass-border: rgba(255, 255, 255, 0.12);
-        --glass-shadow: 0 15px 35px 0 rgba(0, 0, 0, 0.4);
-        --glass-highlight: inset 0 1px 1px rgba(255, 255, 255, 0.25), 
-                           inset 0 20px 40px rgba(255, 255, 255, 0.03), 
-                           inset 0 -1px 2px rgba(0, 0, 0, 0.4);
-        
-        --text-dark: #ecf0f1;
-        --text-light: #bdc3c7;
-        
-        --accent: #A813B7;
-        --success: #2ecc71;
-        --danger: #ff7675;
-        --warning: #ffeaa7;
-        --gold: #F1C40F; 
-        
-        --bg-secondary: #0a0a0a; 
-      }
+    <link href="css/style.css" rel="stylesheet">
 
-      /* --- PALETA LIGHT MODE (Liquid Glass Extremo) --- */
-      body.light-mode {
-        --glass-bg: linear-gradient(135deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.1) 100%);
-        --glass-border: rgba(255, 255, 255, 0.6);
-        --glass-shadow: 0 15px 35px 0 rgba(31, 38, 135, 0.15);
-        --glass-highlight: inset 0 1px 1px rgba(255, 255, 255, 0.9), 
-                           inset 0 20px 40px rgba(255, 255, 255, 0.5), 
-                           inset 0 -1px 2px rgba(0, 0, 0, 0.05);
-        
-        --text-dark: #1a1a1a;
-        --text-light: #555555;
-        
-        --accent: #8e44ad;
-        --success: #27ae60;
-        --danger: #e74c3c;
-        --warning: #f39c12;
-        --gold: #D4AC0D; 
-        
-        --bg-secondary: #f4f4f9; 
-      }
-
-      * { box-sizing: border-box; margin: 0; padding: 0; outline: none; -webkit-tap-highlight-color: transparent; }
-
-      body {
-        font-family: 'Poppins', sans-serif;
-        background-color: var(--bg-secondary);
-        color: var(--text-dark);
-        height: 100vh;
-        width: 100%;
-        overflow: hidden;
-        display: flex; 
-        flex-direction: row;
-        transition: background-color 0.8s ease, color 0.8s ease;
-      }
-
-      /* --- EL FONDO MORADO RETRÁCTIL CORREGIDO --- */
-      body::before {
-        content: '';
-        position: fixed;
-        top: 0; 
-        left: 0;
-        width: 200vw; 
-        height: 200vh;
-        background-image: radial-gradient(circle at top left, #75009E 0%, rgba(117, 0, 158, 0) 50%);
-        z-index: -1;
-        transform-origin: top left;
-        transition: transform 0.8s cubic-bezier(0.25, 0.8, 0.25, 1);
-      }
-
-      body.light-mode::before {
-        transform: scale(0.5); 
-      }
-
-      /* --- SIDEBAR --- */
-      .sidebar {
-        width: 80px; 
-        height: 96vh;
-        margin: 2vh 0 2vh 2vh; 
-        
-        background: var(--glass-bg);
-        border: 1px solid var(--glass-border);
-        border-radius: 20px;
-        box-shadow: var(--glass-shadow), var(--glass-highlight);
-        backdrop-filter: blur(24px);
-        -webkit-backdrop-filter: blur(24px);
-
-        display: flex; flex-direction: column; padding-top: 20px;
-        transition: width 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), background 0.4s ease, box-shadow 0.4s ease, border 0.4s ease;
-        z-index: 100;
-        flex-shrink: 0; 
-        overflow: hidden;
-      }
-      
-      .sidebar:hover { width: 250px; }
-      
-      .logo { 
-        display: flex; align-items: center; width: 100%; 
-        margin-bottom: 30px; white-space: nowrap; color: var(--text-dark); 
-      }
-      .logo-icon { width: 80px; min-width: 80px; text-align: center; font-size: 24px; text-shadow: 0 0 10px var(--accent); }
-      .logo-text { font-size: 16px; font-weight: 700; opacity: 0; transition: opacity 0.2s ease-in; }
-      .sidebar:hover .logo-text { opacity: 1; transition-delay: 0.1s; }
-
-      .menu-item {
-        width: calc(100% - 20px); margin: 8px 10px; padding: 12px 0; border-radius: 12px;
-        color: var(--text-light); text-decoration: none; display: flex; align-items: center; cursor: pointer;
-        white-space: nowrap; position: relative; transition: background 0.2s, color 0.2s;
-      }
-      
-      .menu-item-icon { width: 60px; min-width: 60px; text-align: center; font-size: 20px; }
-      .menu-text { font-size: 15px; opacity: 0; width: 0; overflow: hidden; transition: opacity 0.2s ease; }
-      .sidebar:hover .menu-text { opacity: 1; width: auto; padding-right: 15px; }
-      .menu-item:hover, .menu-item.active { background: rgba(168, 19, 183, 0.2); color: var(--text-dark); font-weight: 600; }
-
-      .submenu-container { width: 100%; display: flex; flex-direction: column; }
-      .submenu { display: none; flex-direction: column; width: 100%; margin-top: -5px; margin-bottom: 10px; }
-      .submenu-item {
-        width: calc(100% - 20px); margin: 2px 10px; padding: 10px 0; border-radius: 10px;
-        color: var(--text-light); cursor: pointer; display: flex; align-items: center; transition: 0.2s; white-space: nowrap;
-      }
-      .submenu-icon { width: 60px; min-width: 60px; text-align: center; font-size: 14px; }
-      .submenu-item:hover, .submenu-item.active { color: var(--text-dark); background: rgba(128, 128, 128, 0.1); }
-
-      .bottom-actions {
-        width: 250px; display: flex; flex-direction: row; align-items: center; justify-content: center;
-        gap: 25px; margin-bottom: 20px; opacity: 0; visibility: hidden; 
-        transition: opacity 0.1s 0s, visibility 0s 0.1s; 
-      }
-      .sidebar:hover .bottom-actions { opacity: 1; visibility: visible; transition: opacity 0.4s 0.3s, visibility 0s 0.3s; }
-
-      .theme-switch {
-        position: relative; width: 46px; height: 24px; background: rgba(0,0,0,0.3); border-radius: 15px;
-        border: 1px solid var(--glass-border); cursor: pointer; display: flex; align-items: center; justify-content: space-between;
-        padding: 0 4px; color: var(--text-light); font-size: 10px; box-shadow: inset 0 2px 5px rgba(0,0,0,0.2);
-      }
-      body.light-mode .theme-switch { background: rgba(0,0,0,0.1); }
-      
-      .switch-circle {
-        position: absolute; width: 18px; height: 18px; background: var(--text-dark); border-radius: 50%; left: 3px;
-        transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-      }
-      body.light-mode .switch-circle { transform: translateX(20px); background: white; }
-
-      .btn-refresh { color: var(--text-light); font-size: 18px; cursor: pointer; transition: 0.2s; }
-      .btn-refresh:hover { color: var(--text-dark); transform: rotate(45deg); }
-
-      /* --- CONTENIDO PRINCIPAL --- */
-      .main-content {
-        flex: 1; height: 100vh; overflow-y: auto; overflow-x: hidden; padding: 2vh; width: 100%; display: block; 
-      }
-
-      .grid-layout {
-        display: grid; gap: 20px; grid-template-columns: repeat(3, minmax(0, 1fr)); width: 100%; align-content: start;
-      }
-
-      .third-width { grid-column: span 1; }
-      .half-width { grid-column: span 2; }
-      .full-width { grid-column: 1 / -1; }
-
-      .section-header {
-        grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: center;
-        color: var(--text-dark); margin-bottom: 10px; width: 100%;
-      }
-
-      /* Estructura para gráficos */
-      .charts-wrapper {
-        grid-column: 1 / -1; 
-        display: grid; 
-        grid-template-columns: repeat(2, 1fr); 
-        gap: 20px;
-      }
-
-      .chart-controls {
-        display: flex; align-items: center; gap: 12px; font-size: 0.85rem; color: var(--text-light);
-      }
-      .chart-controls i {
-        cursor: pointer; transition: color 0.2s ease, transform 0.2s ease;
-      }
-      .chart-controls i:hover { color: var(--text-dark); transform: scale(1.1); }
-      .chart-controls span { font-weight: 600; color: var(--text-dark); user-select: none; }
-
-      /* --- LIQUID GLASS EN TARJETAS --- */
-      .glass {
-        background: var(--glass-bg); 
-        backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
-        border: 1px solid var(--glass-border); border-radius: 20px;
-        box-shadow: var(--glass-shadow), var(--glass-highlight); 
-        transition: background 0.8s ease, border 0.8s ease, box-shadow 0.8s ease;
-      }
-
-      /* --- COMPONENTES --- */
-      .date-badge { background: rgba(128,128,128,0.2); padding: 6px 16px; border-radius: 20px; font-size: 0.9rem; border: 1px solid var(--glass-border); color: var(--text-dark); font-weight: 500;}
-      .kpi-card { padding: 20px; display: flex; flex-direction: column; justify-content: space-between; height: 130px; }
-      .kpi-title { font-size: 0.85rem; color: var(--text-light); display: flex; align-items: center; gap: 8px; }
-      .kpi-value { font-size: 1.6rem; font-weight: 700; margin-top: 5px; color: var(--text-dark); }
-      .kpi-trend { font-size: 0.75rem; margin-top: 5px; }
-      .table-card { padding: 15px; overflow-x: auto; }
-      table { width: 100%; border-collapse: collapse; min-width: 100%; }
-      th { text-align: left; color: var(--text-light); font-size: 0.8rem; padding-bottom: 10px; border-bottom: 1px solid var(--glass-border); }
-      td { padding: 12px 0; font-size: 0.9rem; border-bottom: 1px solid rgba(128,128,128,0.1); color: var(--text-dark); }
-      .tool-card { padding: 15px; display: flex; flex-direction: column; align-items: center; text-align: center; }
-      .tool-input { width: 100%; padding: 8px; margin: 5px 0; border: 1px solid var(--glass-border); border-radius: 8px; font-size: 0.9rem; background: transparent; color: var(--text-dark); }
-      .btn-action { width: 100%; padding: 8px; border-radius: 8px; border: none; color: white; background: #333; cursor: pointer; border: 1px solid rgba(255,255,255,0.2); }
-
-      /* ========================================================= */
-      /* --- BOTÓN FLOTANTE (FAB) CON LIQUID GLASS Y MENÚ ANIMADO --- */
-      /* ========================================================= */
-      .fab-container {
-        position: fixed; bottom: 25px; right: 25px; z-index: 200;
-        display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
-      }
-
-      .glass-purple {
-        background: linear-gradient(135deg, rgba(168, 19, 183, 0.6) 0%, rgba(168, 19, 183, 0.1) 100%);
-        backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
-        border: 1px solid rgba(255, 255, 255, 0.25);
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4), 
-                    inset 0 1px 1px rgba(255, 255, 255, 0.5), 
-                    inset 0 20px 40px rgba(255, 255, 255, 0.1), 
-                    inset 0 -1px 2px rgba(0, 0, 0, 0.3);
-        color: white; 
-      }
-      
-      body.light-mode .glass-purple {
-        background: linear-gradient(135deg, rgba(168, 19, 183, 0.4) 0%, rgba(168, 19, 183, 0.15) 100%);
-        border: 1px solid rgba(168, 19, 183, 0.5);
-        box-shadow: 0 10px 25px rgba(168, 19, 183, 0.25), 
-                    inset 0 1px 1px rgba(255, 255, 255, 0.9), 
-                    inset 0 20px 40px rgba(255, 255, 255, 0.4), 
-                    inset 0 -1px 2px rgba(168, 19, 183, 0.15);
-        color: #1a1a1a;
-      }
-
-      .fab { 
-        width: 55px; height: 55px; border-radius: 50%; 
-        display: flex; align-items: center; justify-content: center; font-size: 22px; 
-        cursor: pointer; position: relative; z-index: 202; 
-        transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease; 
-      }
-      
-      .fab:hover { 
-        transform: scale(1.08); 
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4), 
-                    0 0 20px rgba(168, 19, 183, 0.8),
-                    inset 0 1px 1px rgba(255, 255, 255, 0.5), 
-                    inset 0 20px 40px rgba(255, 255, 255, 0.1), 
-                    inset 0 -1px 2px rgba(0, 0, 0, 0.3);
-      }
-      
-      body.light-mode .fab:hover {
-        box-shadow: 0 10px 25px rgba(168, 19, 183, 0.25), 
-                    0 0 20px rgba(168, 19, 183, 0.6), 
-                    inset 0 1px 1px rgba(255, 255, 255, 0.9), 
-                    inset 0 20px 40px rgba(255, 255, 255, 0.4), 
-                    inset 0 -1px 2px rgba(168, 19, 183, 0.15);
-      }
-      
-      .fab:active { transform: scale(0.95); }
-      .fab-container.active .fab { transform: rotate(45deg); }
-      .fab-container.active .fab:hover { transform: rotate(45deg) scale(1.08); }
-
-      .fab-menu {
-        position: absolute; bottom: 65px; right: 0; width: 55px; 
-        display: flex; flex-direction: column-reverse; align-items: center; gap: 15px;
-        pointer-events: none; z-index: 201; margin-bottom: 15px;
-      }
-      .fab-container.active .fab-menu { pointer-events: auto; }
-
-      .fab-item {
-        width: 45px; height: 45px; border-radius: 50%;
-        display: flex; align-items: center; justify-content: center; font-size: 18px; 
-        cursor: pointer; position: relative; opacity: 0; 
-        transform: translateY(20px) scale(0.5); 
-        transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;
-      }
-      
-      .fab-container.active .fab-item { opacity: 1; transform: translateY(0) scale(1); }
-
-      .fab-label {
-        position: absolute; right: 60px; top: 50%; transform: translateY(-50%) translateX(20px);
-        padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; 
-        white-space: nowrap; opacity: 0; pointer-events: none; 
-        transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) 0s, opacity 0.2s ease 0s;
-      }
-      
-      .fab-container.active .fab-label {
-        opacity: 1; transform: translateY(-50%) translateX(0); pointer-events: auto; cursor: pointer;
-        transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s, opacity 0.3s ease 0.3s;
-      }
-
-      .fab-item:hover, .fab-label:hover {
-        box-shadow: 0 5px 15px rgba(168, 19, 183, 0.6), inset 0 1px 1px rgba(255, 255, 255, 0.5);
-      }
-
-      /* ========================================================= */
-      /* --- MODAL LIQUID GLASS NEGRO (Para Formularios)         --- */
-      /* ========================================================= */
-      .modal-overlay {
-        position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-        background: rgba(0, 0, 0, 0.5); 
-        backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-        z-index: 1000;
-        display: none; align-items: center; justify-content: center;
-        opacity: 0; transition: opacity 0.3s ease, backdrop-filter 0.3s ease;
-      }
-      .modal-overlay.active { opacity: 1; }
-      
-      .modal-overlay.transition-no-blur {
-        backdrop-filter: none !important;
-        -webkit-backdrop-filter: none !important;
-      }
-      
-      .modal-glass {
-        background: linear-gradient(135deg, rgba(20, 20, 20, 0.85) 0%, rgba(20, 20, 20, 0.4) 100%);
-        backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
-        border: 1px solid rgba(255, 255, 255, 0.15);
-        border-radius: 24px;
-        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6),
-                    inset 0 1px 1px rgba(255, 255, 255, 0.3),
-                    inset 0 20px 40px rgba(255, 255, 255, 0.05),
-                    inset 0 -1px 2px rgba(0, 0, 0, 0.6);
-        width: 90%; 
-        padding: 30px;
-        color: white; 
-        transform: translateY(30px) scale(0.95);
-        transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-        max-height: 90vh; /* Prevención para pantallas pequeñas */
-        overflow-y: auto;
-      }
-      
-      /* Ocultar barra de scroll en modal */
-      .modal-glass::-webkit-scrollbar { width: 0px; background: transparent; }
-      
-      .modal-md { max-width: 420px; }
-      .modal-lg { max-width: 600px; } 
-      
-      .modal-overlay.active .modal-glass { transform: translateY(0) scale(1); }
-
-      .modal-input {
-        width: 100%; padding: 12px 15px; margin: 8px 0;
-        border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 12px;
-        background: rgba(0, 0, 0, 0.3); color: white;
-        font-size: 0.95rem; transition: border 0.3s ease, background 0.3s ease, opacity 0.3s ease;
-      }
-      .modal-input:focus { border: 1px solid var(--accent); background: rgba(0, 0, 0, 0.5); }
-      .modal-input::placeholder { color: rgba(255, 255, 255, 0.4); }
-      
-      /* Campos deshabilitados */
-      .modal-input:disabled { opacity: 0.4; cursor: not-allowed; border: 1px dashed rgba(255,255,255,0.2); }
-
-      /* Botoneras Base (Con Relleno) */
-      .role-btn {
-        flex: 1; padding: 10px 5px; font-size: 0.75rem; font-weight: 600;
-        border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.2);
-        background: rgba(0, 0, 0, 0.3); color: rgba(255, 255, 255, 0.7);
-        cursor: pointer; transition: all 0.3s ease;
-      }
-      .role-btn.active {
-        background: linear-gradient(135deg, var(--accent) 0%, #6c5ce7 100%);
-        color: white; border-color: rgba(255, 255, 255, 0.5);
-        box-shadow: 0 4px 15px rgba(168, 19, 183, 0.4);
-      }
-
-      /* Botoneras Outline (Como Borde Fuerte para Contratos) */
-      .role-btn-outline {
-        flex: 1; padding: 10px 5px; font-size: 0.75rem; font-weight: 600;
-        border-radius: 12px; border: 2px solid rgba(255, 255, 255, 0.2);
-        background: transparent !important; color: rgba(255, 255, 255, 0.7);
-        cursor: pointer; transition: all 0.3s ease;
-      }
-      .role-btn-outline.active {
-        border-color: var(--accent); 
-        color: white;
-        box-shadow: 0 0 15px rgba(168, 19, 183, 0.5); 
-      }
-
-      /* ---------------------------------------------------- */
-      /* CONTENEDOR DE CONTRASEÑA E ICONOS                    */
-      /* ---------------------------------------------------- */
-      .pwd-container { position: relative; width: 100%; margin: 8px 0 10px; display: flex; align-items: center; }
-      .pwd-input { width: 100%; padding: 12px 85px 12px 15px; margin: 0; box-sizing: border-box; }
-      
-      .pwd-actions {
-        position: absolute; right: 6px; top: 6px; bottom: 6px;
-        display: flex; gap: 4px; align-items: center; justify-content: flex-end;
-      }
-      .action-wrapper { height: 100%; aspect-ratio: 1; position: relative; }
-
-      .copy-icon-btn {
-        width: 100%; height: 100%; 
-        display: flex; align-items: center; justify-content: center;
-        color: rgba(255,255,255,0.7); cursor: pointer; transition: color 0.3s; font-size: 1.1rem;
-      }
-      .copy-icon-btn:hover { color: white; }
-      .copy-icon-btn.copied { color: var(--success); }
-      
-      .gen-pwd-btn {
-        width: 100%; height: 100%;
-        background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2);
-        border-radius: 8px; color: white;
-        cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center;
-      }
-      .gen-pwd-btn:hover { background: rgba(255, 255, 255, 0.25); }
-
-      .tooltip-container:hover .tooltip-text { visibility: visible; opacity: 1; bottom: 140%; }
-      .tooltip-text {
-        visibility: hidden; background-color: rgba(0,0,0,0.9); color: #fff;
-        text-align: center; border-radius: 8px; padding: 6px 12px; font-size: 0.75rem;
-        position: absolute; z-index: 10; bottom: 130%; left: 50%; transform: translateX(-50%);
-        opacity: 0; transition: opacity 0.3s, bottom 0.3s; white-space: nowrap; 
-        border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 4px 15px rgba(0,0,0,0.5); pointer-events: none;
-      }
-      .tooltip-text::after {
-        content: ""; position: absolute; top: 100%; left: 50%; margin-left: -5px;
-        border-width: 5px; border-style: solid; border-color: rgba(0,0,0,0.9) transparent transparent transparent;
-      }
-
-      /* ---------------------------------------------------- */
-      /* INDICADORES DE SEGURIDAD                             */
-      /* ---------------------------------------------------- */
-      .pwd-rules { display: flex; flex-direction: column; gap: 6px; margin-bottom: 25px; padding-left: 5px; margin-top: 10px; }
-      .pwd-rule { display: flex; align-items: center; gap: 8px; color: rgba(255,255,255,0.4); font-size: 0.75rem; transition: color 0.4s ease; }
-      .rule-circle {
-        width: 14px; height: 14px; min-width: 14px; border-radius: 50%; 
-        border: 1px solid rgba(255,255,255,0.4); display: flex; align-items: center; justify-content: center; transition: all 0.4s ease;
-      }
-      .rule-circle i { font-size: 8px; opacity: 0; transform: scale(0.5); transition: opacity 0.4s ease, transform 0.4s ease, color 0.4s ease; }
-      
-      .pwd-rule.valid { color: var(--success); }
-      .pwd-rule.valid .rule-circle { border-color: var(--success); background: rgba(46, 204, 113, 0.1); }
-      .pwd-rule.valid .rule-circle i { opacity: 1; transform: scale(1); color: var(--success); }
-
-      /* ---------------------------------------------------- */
-      /* BOTONES DE EXENCIÓN EN MODAL CONTRATO                */
-      /* ---------------------------------------------------- */
-      .override-toggle {
-        display: inline-flex; align-items: center; gap: 8px; 
-        margin-top: 10px; margin-bottom: 15px; margin-left: 5px; 
-        color: rgba(255,255,255,0.4); font-size: 0.8rem; cursor: pointer; transition: color 0.3s ease;
-      }
-      .override-toggle.active { color: var(--success); }
-      .override-toggle.active .rule-circle { border-color: var(--success); background: rgba(46, 204, 113, 0.1); }
-      .override-toggle.active .rule-circle i { opacity: 1; transform: scale(1); color: var(--success); }
-
-      /* ---------------------------------------------------- */
-      /* BOTÓN GUARDAR (ESTADOS INACTIVO / ACTIVO)            */
-      /* ---------------------------------------------------- */
-      .btn-save-profile {
-        width: 100%; padding: 12px; margin-top: 5px;
-        background: transparent; border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; 
-        color: rgba(255,255,255,0.4); font-size: 1rem; font-weight: 600; 
-        box-shadow: none; cursor: not-allowed; transition: all 0.4s ease;
-      }
-      
-      .btn-save-profile.active {
-        background: linear-gradient(45deg, var(--accent), #6c5ce7); border-color: rgba(255,255,255,0.3); 
-        color: white; box-shadow: 0 4px 15px rgba(168, 19, 183, 0.4); cursor: pointer;
-      }
-
-      /* ---------------------------------------------------- */
-      /* ESTRUCTURA GRID PARA MODALES AMPLIOS                 */
-      /* ---------------------------------------------------- */
-      .form-grid {
-        display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 15px;
-      }
-
-      /* Menú Desplegable Selector */
-      .custom-dropdown-container { position: relative; width: 100%; }
-      .custom-dropdown-btn {
-        width: 100%; padding: 12px 15px; margin: 8px 0;
-        border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 12px;
-        background: rgba(0, 0, 0, 0.3); color: white; text-align: left;
-        font-size: 0.95rem; cursor: pointer; transition: border 0.3s ease, background 0.3s ease;
-        display: flex; justify-content: space-between; align-items: center;
-      }
-      .custom-dropdown-btn:hover { border: 1px solid var(--accent); background: rgba(0, 0, 0, 0.4); }
-      
-      .custom-dropdown-menu {
-        display: none; position: absolute; top: calc(100% + 5px); left: 0; width: 100%; 
-        background: rgba(20, 20, 20, 0.95); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-        border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 12px;
-        padding: 8px; z-index: 1001; box-shadow: 0 10px 30px rgba(0,0,0,0.6);
-      }
-      .custom-dropdown-container.open .custom-dropdown-menu { display: block; }
-      
-      .dropdown-empty-msg {
-        text-align: center; color: rgba(255,255,255,0.5); font-size: 0.85rem; padding: 10px;
-      }
-      
-      .add-profile-inline-btn {
-        width: 100%; display: flex; justify-content: space-between; align-items: center;
-        padding: 10px 15px; background: transparent; border: none; border-radius: 8px;
-        color: rgba(255,255,255,0.6); font-size: 0.9rem; cursor: pointer; transition: all 0.3s ease;
-      }
-      .add-profile-inline-btn:hover {
-        background: rgba(46, 204, 113, 0.35); color: var(--success);
-      }
-      .add-profile-inline-btn span.plus-icon { font-size: 1.2rem; font-weight: 600; }
-
-      /* --- MÓVIL RESPONSIVE --- */
-      @media (max-width: 768px) {
-        body { flex-direction: column; } 
-        .sidebar {
-          width: 100%; height: 70px; margin: 0; border-radius: 0; 
-          flex-direction: row; justify-content: space-around; align-items: center;
-          padding: 0; position: fixed; bottom: 0; background: var(--glass-bg);
-          border: none; border-top: 1px solid var(--glass-border); z-index: 999;
-        }
-        .sidebar:hover { width: 100%; } 
-        .main-content { padding: 20px 20px 90px 20px; }
-        .grid-layout { grid-template-columns: 1fr; }
-        .third-width, .half-width, .full-width { grid-column: 1 / -1; }
-        .charts-wrapper { grid-template-columns: 1fr !important; }
-        .logo, .menu-text { display: none; }
-        .menu-item { width: auto; margin: 0; padding: 10px; flex-direction: column; }
-        .menu-item-icon { width: auto; min-width: auto; }
-        
-        .submenu { position: fixed; bottom: 75px; left: 10px; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 15px; padding: 10px; width: auto; z-index: 998;}
-        .submenu-item { width: auto; margin: 5px; padding: 10px 15px; }
-        .submenu-icon { width: auto; min-width: auto; margin-right: 10px; }
-        
-        .glass { backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
-        .bottom-actions { opacity: 1; visibility: visible; transition: none; width: auto; margin: 0; gap: 15px; }
-        
-        .fab-container { bottom: 90px; right: 20px; }
-      }
-    </style>
   </head>
   <body>
 
     <!-- MENÚ LATERAL -->
     <nav class="sidebar">
-      
+
       <!-- Logo Familia Bautista -->
       <div class="logo">
         <i class="fas fa-home logo-icon"></i>
         <span class="logo-text">Familia Bautista</span>
       </div>
-      
+
       <!-- GRUPO RESUMEN CON SUBMENÚ -->
       <div class="submenu-container">
         <div class="menu-item active" id="btn-resumen" onclick="toggleSubmenu(true)">
           <i class="fas fa-chart-pie menu-item-icon"></i>
           <span class="menu-text">Resumen <i class="fas fa-chevron-down" style="font-size: 0.7rem; margin-left: 8px;"></i></span>
         </div>
-        
+
         <div class="submenu" id="submenu-resumen" style="display: flex;">
           <div class="submenu-item active" id="btn-sub-general" onclick="cambiarVista('dashboard', this)">
             <i class="fas fa-wallet submenu-icon"></i>
@@ -569,12 +42,12 @@
           </div>
         </div>
       </div>
-      
+
       <div class="menu-item" onclick="cambiarVista('arriendo', this)">
         <i class="fas fa-key menu-item-icon"></i>
         <span class="menu-text">Arrendamiento</span>
       </div>
-      
+
       <div class="menu-item" onclick="cambiarVista('herramientas', this)">
         <i class="fas fa-tools menu-item-icon"></i>
         <span class="menu-text">Herramientas</span>
@@ -597,7 +70,7 @@
 
     <!-- ÁREA PRINCIPAL -->
     <main class="main-content">
-      
+
       <!-- ================= 1. VISTA: BALANCE GENERAL ================= -->
       <div id="view-dashboard" class="grid-layout">
         <div class="section-header">
@@ -628,7 +101,7 @@
           </div>
           <div class="kpi-value" style="color: var(--text-dark)">$1,550</div>
         </div>
-        
+
         <!-- 3. Tarjeta Ingresos -->
         <div class="kpi-card glass third-width" style="order: 3; border-color: var(--success); background: linear-gradient(135deg, rgba(46, 204, 113, 0.2) 0%, rgba(46, 204, 113, 0.02) 100%);">
           <div>
@@ -640,7 +113,7 @@
 
         <!-- 4. Contenedor de Gráficos (4 Tarjetas) -->
         <div class="charts-wrapper" style="order: 4;">
-          
+
           <!-- Gráfico: Rendimiento Anual -->
           <div class="glass" style="padding: 20px; display: flex; flex-direction: column; min-height: 280px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
@@ -763,7 +236,7 @@
     <!-- BOTÓN FLOTANTE INTERACTIVO (FAB LIQUID GLASS)  -->
     <!-- ============================================== -->
     <div class="fab-container" id="fab-container">
-      
+
       <div class="fab-menu">
         <div class="fab-item glass-purple" onclick="abrirModalPerfil()">
           <i class="fas fa-user"></i>
@@ -775,7 +248,7 @@
           <div class="fab-label glass-purple" onclick="abrirModalContrato()">Parametrizar contrato</div>
         </div>
       </div>
-      
+
       <div class="fab glass-purple" onclick="toggleFabMenu()">
         <i class="fas fa-plus"></i>
       </div>
@@ -787,13 +260,13 @@
     <!-- ============================================== -->
     <div id="modal-perfil" class="modal-overlay">
       <div class="modal-glass modal-md">
-        
+
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
           <h3 style="margin: 0; font-size: 1.3rem; font-weight: 600;">Crear Nuevo Perfil</h3>
-          <i class="fas fa-times" style="cursor: pointer; font-size: 1.3rem; opacity: 0.7; transition: 0.2s;" 
+          <i class="fas fa-times" style="cursor: pointer; font-size: 1.3rem; opacity: 0.7; transition: 0.2s;"
              onclick="cerrarModalPerfil()" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'"></i>
         </div>
-        
+
         <div style="margin-bottom: 20px;">
           <label style="font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-left: 5px; font-weight: 600;">Rol del Perfil</label>
           <div style="display: flex; gap: 8px; margin-top: 8px;">
@@ -807,12 +280,12 @@
           <label style="font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-left: 5px; font-weight: 600;">Nombre del Perfil</label>
           <input type="text" id="input-nombre-perfil" placeholder="" class="modal-input" oninput="capitalizarNombres(this); validarFormularioPerfil();">
         </div>
-        
+
         <div>
           <label style="font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-left: 5px; font-weight: 600;">Contraseña de Acceso</label>
           <div class="pwd-container">
             <input type="text" id="input-password-perfil" placeholder="Escribe o genera una clave" class="modal-input pwd-input" oninput="validarFormularioPerfil()">
-            
+
             <div class="pwd-actions">
               <div id="wrapper-copy-btn" class="action-wrapper" style="display: none;" onclick="copiarPasswordManual()" title="Copiar al portapapeles">
                 <div id="icono-copiar" class="copy-icon-btn">
@@ -828,7 +301,7 @@
               </div>
             </div>
           </div>
-          
+
           <div class="pwd-rules">
             <div class="pwd-rule" id="rule-length">
               <div class="rule-circle"><i class="fas fa-check"></i></div>
@@ -848,7 +321,7 @@
             </div>
           </div>
         </div>
-        
+
         <button id="btn-guardar-perfil" class="btn-save-profile" onclick="guardarPerfilSiValido()">
           Guardar Perfil
         </button>
@@ -861,10 +334,10 @@
     <!-- ============================================== -->
     <div id="modal-contrato" class="modal-overlay">
       <div class="modal-glass modal-lg">
-        
+
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
           <h3 style="margin: 0; font-size: 1.3rem; font-weight: 600;">Parametrizar Contrato</h3>
-          <i class="fas fa-times" style="cursor: pointer; font-size: 1.3rem; opacity: 0.7; transition: 0.2s;" 
+          <i class="fas fa-times" style="cursor: pointer; font-size: 1.3rem; opacity: 0.7; transition: 0.2s;"
              onclick="cerrarModalContrato()" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'"></i>
         </div>
 
@@ -880,24 +353,24 @@
             <button class="role-btn-outline" onclick="seleccionarTipoContrato(this, 'familiar')">Contrato familiar</button>
           </div>
         </div>
-        
+
         <!-- Formulario en Grid adaptable -->
         <div class="form-grid">
-          
+
           <div style="grid-column: 1 / -1;">
             <label style="font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-left: 5px; font-weight: 600;">Arrendatario / Inquilino</label>
-            
+
             <div class="custom-dropdown-container" id="dropdown-arrendatario-container">
               <button class="custom-dropdown-btn" style="margin-bottom: 0;" onclick="toggleDropdownArrendatario(event)">
                 <span id="selected-arrendatario-text">Seleccionar perfil existente...</span>
                 <i class="fas fa-chevron-down" style="font-size: 0.8rem; opacity: 0.7;"></i>
               </button>
-              
+
               <div class="custom-dropdown-menu">
                 <div class="dropdown-empty-msg" id="msg-dropdown-perfiles">
                   No se encontraron perfiles activos para parametrizar.
                 </div>
-                
+
                 <button class="add-profile-inline-btn" onclick="transicionCrearPerfil(event)">
                   <span>Agregar nuevo perfil</span>
                   <span class="plus-icon">+</span>
@@ -905,7 +378,7 @@
               </div>
             </div>
           </div>
-          
+
           <div style="display: flex; flex-direction: column;">
             <label style="font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-left: 5px; font-weight: 600;">Canon Base ($)</label>
             <input type="number" id="input-canon" placeholder="$ 0" class="modal-input" style="margin-bottom: 0;">
@@ -914,7 +387,7 @@
               <span>Eximido</span>
             </div>
           </div>
-          
+
           <div style="display: flex; flex-direction: column;">
             <label style="font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-left: 5px; font-weight: 600;">Día de Corte/Pago</label>
             <input type="number" id="input-dia-pago" placeholder="Ej: 5" min="1" max="31" class="modal-input" style="margin-bottom: 0;">
@@ -923,13 +396,13 @@
               <span>A beneficio</span>
             </div>
           </div>
-          
+
           <div style="display: flex; flex-direction: column;">
             <label style="font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-left: 5px; font-weight: 600;">Fecha de Inicio</label>
             <input type="date" class="modal-input" style="color: rgba(255,255,255,0.7); margin-bottom: 15px;">
             <!-- Sin botón de exención según requerimiento -->
           </div>
-          
+
           <div style="display: flex; flex-direction: column;">
             <label style="font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-left: 5px; font-weight: 600;">Fecha de Vencimiento</label>
             <input type="date" id="input-vencimiento" class="modal-input" style="color: rgba(255,255,255,0.7); margin-bottom: 0;">
@@ -945,7 +418,7 @@
           </div>
 
         </div>
-        
+
         <button id="btn-guardar-contrato" class="btn-save-profile active" style="margin-top: 5px;" onclick="guardarContrato()">
           Guardar Contrato
         </button>
@@ -954,499 +427,7 @@
     </div>
 
     <!-- SCRIPTS -->
-    <script>
-      function actualizarFechaHora() {
-        const date = new Date();
-        const formatter = new Intl.DateTimeFormat('es-CO', {
-          timeZone: 'America/Bogota',
-          day: '2-digit', month: 'long', year: 'numeric',
-          hour: 'numeric', minute: '2-digit', hour12: true
-        });
+    <script src="js/ui.js"></script>
 
-        const parts = formatter.formatToParts(date);
-        let dia = '', mes = '', anio = '', hora = '', minuto = '', ampm = '';
-        
-        for (const part of parts) {
-          if (part.type === 'day') dia = part.value;
-          if (part.type === 'month') mes = part.value;
-          if (part.type === 'year') anio = part.value;
-          if (part.type === 'hour') hora = part.value;
-          if (part.type === 'minute') minuto = part.value;
-          if (part.type === 'dayPeriod') ampm = part.value.toLowerCase().replace(/\./g, '').trim(); 
-        }
-        
-        document.getElementById('fecha-hoy').innerText = `${dia} de ${mes} de ${anio} | ${hora}:${minuto} ${ampm}`;
-      }
-
-      // --- Inicialización de Gráficos (Chart.js) ---
-      function initCharts() {
-        // Configuraciones globales para que luzca bien en ambos temas
-        Chart.defaults.color = '#888';
-        Chart.defaults.font.family = "'Poppins', sans-serif";
-
-        // 1. Gráfico Anual (Líneas Suaves)
-        const ctxAnual = document.getElementById('chart-anual');
-        if (ctxAnual) {
-          new Chart(ctxAnual, {
-            type: 'line',
-            data: {
-              labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul'],
-              datasets: [{
-                label: 'Ingresos',
-                data: [2800, 2900, 3100, 2700, 3200, 2800, 3500],
-                borderColor: '#2ecc71', /* success */
-                backgroundColor: 'rgba(46, 204, 113, 0.1)',
-                borderWidth: 2,
-                tension: 0.4,
-                fill: true
-              }, {
-                label: 'Gastos',
-                data: [1250, 1400, 1300, 1600, 1200, 1500, 1250],
-                borderColor: '#ff7675', /* danger */
-                backgroundColor: 'rgba(255, 118, 117, 0.1)',
-                borderWidth: 2,
-                tension: 0.4,
-                fill: true
-              }]
-            },
-            options: {
-              responsive: true,
-              maintainAspectRatio: false,
-              plugins: { 
-                legend: { position: 'top', labels: { boxWidth: 12, usePointStyle: true } } 
-              },
-              scales: {
-                y: { grid: { color: 'rgba(128, 128, 128, 0.15)' }, border: { display: false } },
-                x: { grid: { display: false }, border: { display: false } }
-              },
-              interaction: { mode: 'index', intersect: false }
-            }
-          });
-        }
-
-        // 2. Gráfico Mensual (Barras de Balance Diario 1 al 31)
-        const ctxMensual = document.getElementById('chart-mensual');
-        if (ctxMensual) {
-          const diasDelMes = Array.from({length: 31}, (_, i) => i + 1);
-          // Genera valores aleatorios entre -50 y 150 para simular la dinámica del mes
-          const dataMensual = diasDelMes.map(() => Math.floor(Math.random() * 200) - 50);
-
-          new Chart(ctxMensual, {
-            type: 'bar',
-            data: {
-              labels: diasDelMes,
-              datasets: [{
-                label: 'Balance Neto Diario',
-                data: dataMensual,
-                backgroundColor: (context) => {
-                  return context.raw >= 0 ? '#F1C40F' : '#ff7675'; /* gold or danger */
-                },
-                borderRadius: 4
-              }]
-            },
-            options: {
-              responsive: true,
-              maintainAspectRatio: false,
-              plugins: { legend: { display: false } },
-              scales: {
-                y: { grid: { color: 'rgba(128, 128, 128, 0.15)' }, border: { display: false } },
-                x: { 
-                  grid: { display: false }, 
-                  border: { display: false },
-                  ticks: { maxTicksLimit: 15 } /* Evita saturar la barra X con 31 números pegados */
-                }
-              }
-            }
-          });
-        }
-
-        // 3. Gráfico Circular (Distribución)
-        const ctxCircular = document.getElementById('chart-circular');
-        if (ctxCircular) {
-          new Chart(ctxCircular, {
-            type: 'doughnut',
-            data: {
-              labels: ['Servicios', 'Arriendo', 'Mercado', 'Otros'],
-              datasets: [{
-                data: [350, 800, 450, 150],
-                backgroundColor: ['#3498db', '#2ecc71', '#f1c40f', '#e74c3c'],
-                borderWidth: 0,
-                hoverOffset: 6
-              }]
-            },
-            options: {
-              responsive: true,
-              maintainAspectRatio: false,
-              plugins: { 
-                legend: { position: 'bottom', labels: { boxWidth: 12, usePointStyle: true, padding: 20 } } 
-              },
-              cutout: '75%'
-            }
-          });
-        }
-
-        // 4. Gráfico Apilado (Flujo de Efectivo)
-        const ctxApilado = document.getElementById('chart-apilado');
-        if (ctxApilado) {
-          new Chart(ctxApilado, {
-            type: 'bar',
-            data: {
-              labels: ['Sem 1', 'Sem 2', 'Sem 3', 'Sem 4'],
-              datasets: [
-                {
-                  label: 'Ingresos',
-                  data: [1200, 500, 800, 300],
-                  backgroundColor: 'rgba(46, 204, 113, 0.8)',
-                  borderRadius: 4
-                },
-                {
-                  label: 'Gastos',
-                  data: [400, 600, 300, 900],
-                  backgroundColor: 'rgba(255, 118, 117, 0.8)',
-                  borderRadius: 4
-                }
-              ]
-            },
-            options: {
-              responsive: true,
-              maintainAspectRatio: false,
-              scales: {
-                x: { stacked: true, grid: { display: false }, border: { display: false } },
-                y: { stacked: true, grid: { color: 'rgba(128, 128, 128, 0.15)' }, border: { display: false } }
-              },
-              plugins: { 
-                legend: { position: 'top', labels: { boxWidth: 12, usePointStyle: true } } 
-              }
-            }
-          });
-        }
-      }
-
-      window.addEventListener('load', () => {
-        actualizarFechaHora();
-        setInterval(actualizarFechaHora, 1000);
-        
-        if(localStorage.getItem('temaFamilia') === 'light') {
-          document.body.classList.add('light-mode');
-        }
-
-        // Arrancamos los gráficos al cargar
-        initCharts();
-      });
-
-      function cambiarVista(vistaId, elementoMenu) {
-        ['view-dashboard', 'view-balance-persona', 'view-arriendo', 'view-herramientas'].forEach(id => {
-          document.getElementById(id).style.display = 'none';
-        });
-        
-        document.getElementById('view-' + vistaId).style.display = 'grid';
-        document.querySelectorAll('.menu-item, .submenu-item').forEach(el => el.classList.remove('active'));
-        elementoMenu.classList.add('active');
-
-        const submenu = document.getElementById('submenu-resumen');
-        if (vistaId === 'dashboard' || vistaId === 'balance-persona') {
-          document.getElementById('btn-resumen').classList.add('active');
-          submenu.style.display = 'flex';
-        } else {
-          submenu.style.display = 'none';
-        }
-        
-        document.getElementById('fab-container').classList.remove('active');
-      }
-
-      function toggleSubmenu(forzarApertura = false) {
-        const submenu = document.getElementById('submenu-resumen');
-        if (submenu.style.display === 'none' || forzarApertura) {
-          submenu.style.display = 'flex';
-          cambiarVista('dashboard', document.getElementById('btn-sub-general'));
-        } else {
-          submenu.style.display = 'none';
-        }
-      }
-
-      function toggleTheme() {
-        const body = document.body;
-        body.classList.toggle('light-mode');
-        localStorage.setItem('temaFamilia', body.classList.contains('light-mode') ? 'light' : 'dark');
-      }
-
-      function dividirGasto() {
-        const monto = parseFloat(document.getElementById('monto-div').value);
-        if (monto) document.getElementById('res-div').innerText = `$${(monto / 4).toLocaleString()} c/u`;
-      }
-      
-      // Control de animación del menú flotante
-      function toggleFabMenu() {
-        const fabContainer = document.getElementById('fab-container');
-        fabContainer.classList.toggle('active');
-      }
-
-      // --- Modales y Gestión de Ventanas ---
-
-      function abrirModalPerfil() {
-        document.getElementById('fab-container').classList.remove('active');
-        
-        document.getElementById('input-nombre-perfil').value = '';
-        document.getElementById('input-password-perfil').value = '';
-        validarFormularioPerfil(); 
-        
-        const modal = document.getElementById('modal-perfil');
-        modal.style.display = 'flex'; 
-        setTimeout(() => modal.classList.add('active'), 10);
-      }
-
-      function cerrarModalPerfil() {
-        const modal = document.getElementById('modal-perfil');
-        modal.classList.remove('active');
-        setTimeout(() => modal.style.display = 'none', 300);
-      }
-
-      function abrirModalContrato() {
-        document.getElementById('fab-container').classList.remove('active');
-        
-        const dropdownContainer = document.getElementById('dropdown-arrendatario-container');
-        dropdownContainer.classList.remove('open');
-        
-        const modal = document.getElementById('modal-contrato');
-        modal.style.display = 'flex'; 
-        setTimeout(() => modal.classList.add('active'), 10);
-      }
-
-      function cerrarModalContrato() {
-        const modal = document.getElementById('modal-contrato');
-        modal.classList.remove('active');
-        modal.classList.remove('transition-no-blur'); 
-        setTimeout(() => modal.style.display = 'none', 300);
-      }
-
-      function guardarPerfilSiValido() {
-        const btn = document.getElementById('btn-guardar-perfil');
-        if (btn.classList.contains('active')) {
-          cerrarModalPerfil();
-          alert('¡Perfil configurado con éxito!');
-        }
-      }
-      
-      function seleccionarRol(btn) {
-        const botones = btn.parentElement.querySelectorAll('.role-btn');
-        botones.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-      }
-
-      function seleccionarAccionContrato(btn) {
-        const botones = btn.parentElement.querySelectorAll('.role-btn');
-        botones.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-      }
-
-      function seleccionarTipoContrato(btn, tipo) {
-        const botones = btn.parentElement.querySelectorAll('.role-btn-outline');
-        botones.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        
-        const msgDiv = document.getElementById('msg-dropdown-perfiles');
-        const obsContainer = document.getElementById('container-observaciones');
-        
-        const toggleMap = {
-            'toggle-canon': 'input-canon',
-            'toggle-dia': 'input-dia-pago',
-            'toggle-vencimiento': 'input-vencimiento'
-        };
-
-        if(tipo === 'familiar') {
-            msgDiv.innerText = "No se encontraron perfiles de Colaborador o Integrante activos.";
-            
-            // Mostrar los botones de exención y observaciones
-            for (const tId in toggleMap) {
-                document.getElementById(tId).style.display = 'inline-flex';
-            }
-            obsContainer.style.display = 'block';
-            
-        } else {
-            msgDiv.innerText = "No se encontraron perfiles activos para parametrizar.";
-            
-            // Ocultar los botones, limpiar su estado si estaban activos y ocultar observaciones
-            for (const [tId, iId] of Object.entries(toggleMap)) {
-                const t = document.getElementById(tId);
-                t.style.display = 'none';
-                if (t.classList.contains('active')) {
-                    t.classList.remove('active');
-                    document.getElementById(iId).disabled = false;
-                }
-            }
-            obsContainer.style.display = 'none';
-        }
-      }
-
-      // Animación e inhabilitación de campos de contrato
-      function toggleFieldOverride(inputId, toggleId) {
-        const input = document.getElementById(inputId);
-        const toggle = document.getElementById(toggleId);
-        
-        toggle.classList.toggle('active');
-        
-        if (toggle.classList.contains('active')) {
-            // Se activó el botón de exención
-            input.value = '';
-            input.disabled = true;
-        } else {
-            // Se desactivó el botón de exención
-            input.disabled = false;
-        }
-      }
-
-      function capitalizarNombres(input) {
-        let palabras = input.value.split(' ');
-        for (let i = 0; i < palabras.length; i++) {
-          if (palabras[i].length > 0) {
-            palabras[i] = palabras[i].charAt(0).toUpperCase() + palabras[i].substring(1).toLowerCase();
-          }
-        }
-        input.value = palabras.join(' ');
-      }
-
-      function validarFormularioPerfil() {
-        const pwd = document.getElementById('input-password-perfil').value;
-        const nombre = document.getElementById('input-nombre-perfil').value;
-
-        const rLength = pwd.length >= 8;
-        const rCase = /[a-z]/.test(pwd) && /[A-Z]/.test(pwd);
-        const rNum = /\d/.test(pwd);
-        const rSpec = /[^a-zA-Z0-9]/.test(pwd);
-
-        toggleRule('rule-length', rLength);
-        toggleRule('rule-case', rCase);
-        toggleRule('rule-num', rNum);
-        toggleRule('rule-spec', rSpec);
-
-        const pwdValid = rLength && rCase && rNum && rSpec;
-        const nombreValid = nombre.trim().length > 0;
-
-        const copyBtn = document.getElementById('wrapper-copy-btn');
-        if (pwdValid) {
-          copyBtn.style.display = 'block';
-        } else {
-          copyBtn.style.display = 'none';
-        }
-
-        const saveBtn = document.getElementById('btn-guardar-perfil');
-        if (pwdValid && nombreValid) {
-          saveBtn.classList.add('active');
-        } else {
-          saveBtn.classList.remove('active');
-        }
-      }
-
-      function toggleRule(id, isValid) {
-        const el = document.getElementById(id);
-        if (isValid) {
-          el.classList.add('valid');
-        } else {
-          el.classList.remove('valid');
-        }
-      }
-
-      function copiarAlPortapapeles(texto) {
-        const tempInput = document.createElement("textarea");
-        tempInput.value = texto;
-        tempInput.style.position = "fixed"; 
-        tempInput.style.opacity = "0"; 
-        document.body.appendChild(tempInput);
-        tempInput.focus();
-        tempInput.select();
-        
-        try {
-          document.execCommand('copy');
-          animarIconoCopia();
-        } catch (err) {
-          console.error('No se pudo copiar: ', err);
-        }
-        document.body.removeChild(tempInput);
-      }
-
-      function animarIconoCopia() {
-        const icon = document.getElementById('icono-copiar');
-        icon.classList.add('copied'); 
-        setTimeout(() => {
-          icon.classList.remove('copied'); 
-        }, 1000);
-      }
-
-      function copiarPasswordManual() {
-        const pwdInput = document.getElementById('input-password-perfil');
-        if (!pwdInput.value) return;
-        copiarAlPortapapeles(pwdInput.value);
-      }
-
-      function generarPassword() {
-        const mayusculas = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        const minusculas = "abcdefghijklmnopqrstuvwxyz";
-        const numeros = "0123456789";
-        const especiales = "!@#$%*&_";
-        const todos = mayusculas + minusculas + numeros + especiales;
-        
-        let pwd = "";
-        
-        pwd += mayusculas[Math.floor(Math.random() * mayusculas.length)];
-        pwd += minusculas[Math.floor(Math.random() * minusculas.length)];
-        pwd += numeros[Math.floor(Math.random() * numeros.length)];
-        pwd += especiales[Math.floor(Math.random() * especiales.length)];
-        
-        for (let i = 0; i < 6; i++) {
-          pwd += todos[Math.floor(Math.random() * todos.length)];
-        }
-        
-        pwd = pwd.split('').sort(() => 0.5 - Math.random()).join('');
-        
-        document.getElementById('input-password-perfil').value = pwd;
-        
-        validarFormularioPerfil();
-        copiarAlPortapapeles(pwd);
-      }
-
-      // --- Funciones exclusivas del Modal Contrato ---
-
-      function toggleDropdownArrendatario(event) {
-        event.stopPropagation(); 
-        const container = document.getElementById('dropdown-arrendatario-container');
-        container.classList.toggle('open');
-      }
-
-      document.addEventListener('click', function(event) {
-        const container = document.getElementById('dropdown-arrendatario-container');
-        if (container && container.classList.contains('open') && !container.contains(event.target)) {
-          container.classList.remove('open');
-        }
-      });
-
-      function transicionCrearPerfil(event) {
-        event.stopPropagation(); 
-        
-        const modalContrato = document.getElementById('modal-contrato');
-        modalContrato.classList.add('transition-no-blur');
-        modalContrato.classList.remove('active');
-        
-        const modalPerfil = document.getElementById('modal-perfil');
-        modalPerfil.style.display = 'flex'; 
-        
-        document.getElementById('input-nombre-perfil').value = '';
-        document.getElementById('input-password-perfil').value = '';
-        validarFormularioPerfil();
-        
-        setTimeout(() => {
-            modalContrato.style.display = 'none';
-            modalContrato.classList.remove('transition-no-blur'); 
-            modalPerfil.classList.add('active');
-        }, 300); 
-      }
-
-      function guardarContrato() {
-        const btn = document.getElementById('btn-guardar-contrato');
-        if (btn.classList.contains('active')) {
-          cerrarModalContrato();
-          alert('¡Contrato parametrizado con éxito!');
-        }
-      }
-    </script>
   </body>
 </html>

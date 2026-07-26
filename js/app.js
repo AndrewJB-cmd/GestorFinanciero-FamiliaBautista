@@ -1,198 +1,492 @@
-// ==========================================
-// ⚙️ CONFIGURACIÓN GENERAL
-// ==========================================
+function actualizarFechaHora() {
+  const date = new Date();
+  const formatter = new Intl.DateTimeFormat('es-CO', {
+    timeZone: 'America/Bogota',
+    day: '2-digit', month: 'long', year: 'numeric',
+    hour: 'numeric', minute: '2-digit', hour12: true
+  });
 
-// 🔑 TU LLAVE MAESTRA DE IA (Consíguela en aistudio.google.com)
-var GEMINI_API_KEY = 'PEGAR_TU_API_KEY_AQUI'; 
+  const parts = formatter.formatToParts(date);
+  let dia = '', mes = '', anio = '', hora = '', minuto = '', ampm = '';
 
-// Identificador de la Hoja de Cálculo (Opcional, si el script está incrustado usa getActive)
-var SS = SpreadsheetApp.getActiveSpreadsheet();
-
-// ==========================================
-// 🚀 INICIO DE LA APLICACIÓN
-// ==========================================
-
-function doGet() {
-  return HtmlService.createHtmlOutputFromFile('Index')
-      .setTitle('Finanzas Familiares - Yenny')
-      .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL)
-      .addMetaTag('viewport', 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no');
-}
-
-// ==========================================
-// 💾 GUARDADO DE DATOS (El Corazón)
-// ==========================================
-
-function guardarMovimiento(datos) {
-  /* Recibe un objeto 'datos' desde el HTML:
-    { fecha: "2024-02-20", tipo: "Gasto", responsable: "Casa", 
-      categoria: "Servicios", concepto: "Luz", monto: 120000 }
-  */
-  
-  // 1. Identificar el mes para saber en qué pestaña guardar
-  var fechaObj = new Date(datos.fecha);
-  // Ajuste de zona horaria si es necesario, o split simple del string YYYY-MM-DD
-  var partesFecha = datos.fecha.split('-'); 
-  var mesIndex = parseInt(partesFecha[1]); // 1 = Enero, 2 = Febrero...
-  
-  var nombresMeses = ["", "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", 
-                      "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
-                      
-  var nombreHoja = nombresMeses[mesIndex];
-  var hoja = SS.getSheetByName(nombreHoja);
-  
-  // Si la hoja no existe (ej. error de dedo), avisar
-  if (!hoja) return { exito: false, mensaje: "❌ Error: No existe la hoja '" + nombreHoja + "'." };
-
-  // 2. Guardar el registro
-  // Columnas sugeridas: [Fecha Registro, Fecha Gasto, Tipo, Responsable, Categoría, Concepto, Monto]
-  hoja.appendRow([
-    new Date(),       // Timestamp de registro
-    datos.fecha,      // Fecha del movimiento
-    datos.tipo,
-    datos.responsable,
-    datos.categoria,
-    datos.concepto,
-    parseFloat(datos.monto)
-  ]);
-
-  // 3. Ordenar automáticamente por fecha (Asumiendo fecha en Columna 2 / B)
-  var ultimaFila = hoja.getLastRow();
-  if (ultimaFila > 1) {
-    var rangoDatos = hoja.getRange(2, 1, ultimaFila - 1, hoja.getLastColumn());
-    rangoDatos.sort({column: 2, ascending: true});
+  for (const part of parts) {
+    if (part.type === 'day') dia = part.value;
+    if (part.type === 'month') mes = part.value;
+    if (part.type === 'year') anio = part.value;
+    if (part.type === 'hour') hora = part.value;
+    if (part.type === 'minute') minuto = part.value;
+    if (part.type === 'dayPeriod') ampm = part.value.toLowerCase().replace(/\./g, '').trim();
   }
 
-  return { exito: true, mensaje: "✅ Guardado en " + nombreHoja };
+  document.getElementById('fecha-hoy').innerText = `${dia} de ${mes} de ${anio} | ${hora}:${minuto} ${ampm}`;
 }
 
-// ==========================================
-// 🤖 INTELIGENCIA ARTIFICIAL (Gemini)
-// ==========================================
+// --- Inicialización de Gráficos (Chart.js) ---
+function initCharts() {
+  // Configuraciones globales para que luzca bien en ambos temas
+  Chart.defaults.color = '#888';
+  Chart.defaults.font.family = "'Poppins', sans-serif";
 
-// Función A: El "Resumen Mágico" (Wrapped)
-function generarResumenMensualIA() {
-  // 1. Obtener datos del mes actual (Ej. Febrero)
-  var mesActual = "Febrero"; // Podrías calcularlo dinámicamente con new Date()
-  var hoja = SS.getSheetByName(mesActual);
-  
-  if (!hoja) return { error: "No encontré datos de este mes." };
-  
-  // Leer datos crudos (Simplificado para no saturar la IA con miles de filas)
-  // Leemos encabezados y datos
-  var datos = hoja.getDataRange().getValues();
-  // Calculamos totales rápidos en JS para ayudar a la IA
-  var totalIngreso = 0;
-  var totalGasto = 0;
-  
-  // Saltamos encabezado
-  for (var i = 1; i < datos.length; i++) {
-    var fila = datos[i];
-    // Asumiendo Columna 3 (índice 2) es Tipo, y Columna 7 (índice 6) es Monto
-    if (fila[2] == 'Ingreso') totalIngreso += Number(fila[6]);
-    if (fila[2] == 'Gasto') totalGasto += Number(fila[6]);
+  // 1. Gráfico Anual (Líneas Suaves)
+  const ctxAnual = document.getElementById('chart-anual');
+  if (ctxAnual) {
+    new Chart(ctxAnual, {
+      type: 'line',
+      data: {
+        labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul'],
+        datasets: [{
+          label: 'Ingresos',
+          data: [2800, 2900, 3100, 2700, 3200, 2800, 3500],
+          borderColor: '#2ecc71', /* success */
+          backgroundColor: 'rgba(46, 204, 113, 0.1)',
+          borderWidth: 2,
+          tension: 0.4,
+          fill: true
+        }, {
+          label: 'Gastos',
+          data: [1250, 1400, 1300, 1600, 1200, 1500, 1250],
+          borderColor: '#ff7675', /* danger */
+          backgroundColor: 'rgba(255, 118, 117, 0.1)',
+          borderWidth: 2,
+          tension: 0.4,
+          fill: true
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { position: 'top', labels: { boxWidth: 12, usePointStyle: true } }
+        },
+        scales: {
+          y: { grid: { color: 'rgba(128, 128, 128, 0.15)' }, border: { display: false } },
+          x: { grid: { display: false }, border: { display: false } }
+        },
+        interaction: { mode: 'index', intersect: false }
+      }
+    });
   }
-  
-  var balance = totalIngreso - totalGasto;
 
-  // 2. Prompt para Gemini
-  var prompt = `
-    Actúa como un asistente financiero personal divertido y carismático para 'Yenny'.
-    Datos del mes de ${mesActual}:
-    - Ingresos: $${totalIngreso}
-    - Gastos: $${totalGasto}
-    - Balance: $${balance}
-    
-    Genera 3 tarjetas de resumen (slides) en formato JSON puro:
-    1. Vibe general del mes (con emojis).
-    2. Un dato curioso o consejo sobre el gasto.
-    3. Una motivación para el próximo mes.
-    
-    Formato JSON esperado:
-    [
-      {"emoji": "😎", "title": "Título corto", "text": "Texto divertido..."},
-      {"emoji": "📉", "title": "Título corto", "text": "Texto divertido..."},
-      {"emoji": "🚀", "title": "Título corto", "text": "Texto divertido..."}
-    ]
-  `;
+  // 2. Gráfico Mensual (Barras de Balance Diario 1 al 31)
+  const ctxMensual = document.getElementById('chart-mensual');
+  if (ctxMensual) {
+    const diasDelMes = Array.from({length: 31}, (_, i) => i + 1);
+    // Genera valores aleatorios entre -50 y 150 para simular la dinámica del mes
+    const dataMensual = diasDelMes.map(() => Math.floor(Math.random() * 200) - 50);
 
-  return llamarGemini(prompt);
+    new Chart(ctxMensual, {
+      type: 'bar',
+      data: {
+        labels: diasDelMes,
+        datasets: [{
+          label: 'Balance Neto Diario',
+          data: dataMensual,
+          backgroundColor: (context) => {
+            return context.raw >= 0 ? '#F1C40F' : '#ff7675'; /* gold or danger */
+          },
+          borderRadius: 4
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          y: { grid: { color: 'rgba(128, 128, 128, 0.15)' }, border: { display: false } },
+          x: {
+            grid: { display: false },
+            border: { display: false },
+            ticks: { maxTicksLimit: 15 } /* Evita saturar la barra X con 31 números pegados */
+          }
+        }
+      }
+    });
+  }
+
+  // 3. Gráfico Circular (Distribución)
+  const ctxCircular = document.getElementById('chart-circular');
+  if (ctxCircular) {
+    new Chart(ctxCircular, {
+      type: 'doughnut',
+      data: {
+        labels: ['Servicios', 'Arriendo', 'Mercado', 'Otros'],
+        datasets: [{
+          data: [350, 800, 450, 150],
+          backgroundColor: ['#3498db', '#2ecc71', '#f1c40f', '#e74c3c'],
+          borderWidth: 0,
+          hoverOffset: 6
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { position: 'bottom', labels: { boxWidth: 12, usePointStyle: true, padding: 20 } }
+        },
+        cutout: '75%'
+      }
+    });
+  }
+
+  // 4. Gráfico Apilado (Flujo de Efectivo)
+  const ctxApilado = document.getElementById('chart-apilado');
+  if (ctxApilado) {
+    new Chart(ctxApilado, {
+      type: 'bar',
+      data: {
+        labels: ['Sem 1', 'Sem 2', 'Sem 3', 'Sem 4'],
+        datasets: [
+          {
+            label: 'Ingresos',
+            data: [1200, 500, 800, 300],
+            backgroundColor: 'rgba(46, 204, 113, 0.8)',
+            borderRadius: 4
+          },
+          {
+            label: 'Gastos',
+            data: [400, 600, 300, 900],
+            backgroundColor: 'rgba(255, 118, 117, 0.8)',
+            borderRadius: 4
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          x: { stacked: true, grid: { display: false }, border: { display: false } },
+          y: { stacked: true, grid: { color: 'rgba(128, 128, 128, 0.15)' }, border: { display: false } }
+        },
+        plugins: {
+          legend: { position: 'top', labels: { boxWidth: 12, usePointStyle: true } }
+        }
+      }
+    });
+  }
 }
 
-// Función B: Procesar Texto Natural (La varita mágica)
-function procesarFraseConIA(frase) {
-  var prompt = `
-    Analiza esta frase contable: "${frase}".
-    Extrae la información en JSON con estos campos exactos:
-    - fecha: YYYY-MM-DD (usa la fecha de hoy si no se especifica)
-    - monto: número (sin símbolos)
-    - tipo: "Ingreso" o "Gasto"
-    - categoria: "Servicios", "Alimentos", "Arriendo", "Mantenimiento" u "Otros"
-    - concepto: descripción breve
-    - responsable: quién pagó o recibió
-    
-    Responde SOLO el JSON.
-  `;
-  
-  return llamarGemini(prompt);
+window.addEventListener('load', () => {
+  actualizarFechaHora();
+  setInterval(actualizarFechaHora, 1000);
+
+  if(localStorage.getItem('temaFamilia') === 'light') {
+    document.body.classList.add('light-mode');
+  }
+
+  // Arrancamos los gráficos al cargar
+  initCharts();
+});
+
+function cambiarVista(vistaId, elementoMenu) {
+  ['view-dashboard', 'view-balance-persona', 'view-arriendo', 'view-herramientas'].forEach(id => {
+    document.getElementById(id).style.display = 'none';
+  });
+
+  document.getElementById('view-' + vistaId).style.display = 'grid';
+  document.querySelectorAll('.menu-item, .submenu-item').forEach(el => el.classList.remove('active'));
+  elementoMenu.classList.add('active');
+
+  const submenu = document.getElementById('submenu-resumen');
+  if (vistaId === 'dashboard' || vistaId === 'balance-persona') {
+    document.getElementById('btn-resumen').classList.add('active');
+    submenu.style.display = 'flex';
+  } else {
+    submenu.style.display = 'none';
+  }
+
+  document.getElementById('fab-container').classList.remove('active');
 }
 
-// Helper para conectar con Gemini
-function llamarGemini(prompt) {
-  var url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" + GEMINI_API_KEY;
-  
-  var payload = {
-    "contents": [{
-      "parts": [{"text": prompt}]
-    }]
+function toggleSubmenu(forzarApertura = false) {
+  const submenu = document.getElementById('submenu-resumen');
+  if (submenu.style.display === 'none' || forzarApertura) {
+    submenu.style.display = 'flex';
+    cambiarVista('dashboard', document.getElementById('btn-sub-general'));
+  } else {
+    submenu.style.display = 'none';
+  }
+}
+
+function toggleTheme() {
+  const body = document.body;
+  body.classList.toggle('light-mode');
+  localStorage.setItem('temaFamilia', body.classList.contains('light-mode') ? 'light' : 'dark');
+}
+
+function dividirGasto() {
+  const monto = parseFloat(document.getElementById('monto-div').value);
+  if (monto) document.getElementById('res-div').innerText = `$${(monto / 4).toLocaleString()} c/u`;
+}
+
+// Control de animación del menú flotante
+function toggleFabMenu() {
+  const fabContainer = document.getElementById('fab-container');
+  fabContainer.classList.toggle('active');
+}
+
+// --- Modales y Gestión de Ventanas ---
+
+function abrirModalPerfil() {
+  document.getElementById('fab-container').classList.remove('active');
+
+  document.getElementById('input-nombre-perfil').value = '';
+  document.getElementById('input-password-perfil').value = '';
+  validarFormularioPerfil();
+
+  const modal = document.getElementById('modal-perfil');
+  modal.style.display = 'flex';
+  setTimeout(() => modal.classList.add('active'), 10);
+}
+
+function cerrarModalPerfil() {
+  const modal = document.getElementById('modal-perfil');
+  modal.classList.remove('active');
+  setTimeout(() => modal.style.display = 'none', 300);
+}
+
+function abrirModalContrato() {
+  document.getElementById('fab-container').classList.remove('active');
+
+  const dropdownContainer = document.getElementById('dropdown-arrendatario-container');
+  dropdownContainer.classList.remove('open');
+
+  const modal = document.getElementById('modal-contrato');
+  modal.style.display = 'flex';
+  setTimeout(() => modal.classList.add('active'), 10);
+}
+
+function cerrarModalContrato() {
+  const modal = document.getElementById('modal-contrato');
+  modal.classList.remove('active');
+  modal.classList.remove('transition-no-blur');
+  setTimeout(() => modal.style.display = 'none', 300);
+}
+
+function guardarPerfilSiValido() {
+  const btn = document.getElementById('btn-guardar-perfil');
+  if (btn.classList.contains('active')) {
+    cerrarModalPerfil();
+    alert('¡Perfil configurado con éxito!');
+  }
+}
+
+function seleccionarRol(btn) {
+  const botones = btn.parentElement.querySelectorAll('.role-btn');
+  botones.forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function seleccionarAccionContrato(btn) {
+  const botones = btn.parentElement.querySelectorAll('.role-btn');
+  botones.forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function seleccionarTipoContrato(btn, tipo) {
+  const botones = btn.parentElement.querySelectorAll('.role-btn-outline');
+  botones.forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+
+  const msgDiv = document.getElementById('msg-dropdown-perfiles');
+  const obsContainer = document.getElementById('container-observaciones');
+
+  const toggleMap = {
+      'toggle-canon': 'input-canon',
+      'toggle-dia': 'input-dia-pago',
+      'toggle-vencimiento': 'input-vencimiento'
   };
 
-  var options = {
-    "method": "post",
-    "contentType": "application/json",
-    "payload": JSON.stringify(payload),
-    "muteHttpExceptions": true
-  };
+  if(tipo === 'familiar') {
+      msgDiv.innerText = "No se encontraron perfiles de Colaborador o Integrante activos.";
+
+      // Mostrar los botones de exención y observaciones
+      for (const tId in toggleMap) {
+          document.getElementById(tId).style.display = 'inline-flex';
+      }
+      obsContainer.style.display = 'block';
+
+  } else {
+      msgDiv.innerText = "No se encontraron perfiles activos para parametrizar.";
+
+      // Ocultar los botones, limpiar su estado si estaban activos y ocultar observaciones
+      for (const [tId, iId] of Object.entries(toggleMap)) {
+          const t = document.getElementById(tId);
+          t.style.display = 'none';
+          if (t.classList.contains('active')) {
+              t.classList.remove('active');
+              document.getElementById(iId).disabled = false;
+          }
+      }
+      obsContainer.style.display = 'none';
+  }
+}
+
+// Animación e inhabilitación de campos de contrato
+function toggleFieldOverride(inputId, toggleId) {
+  const input = document.getElementById(inputId);
+  const toggle = document.getElementById(toggleId);
+
+  toggle.classList.toggle('active');
+
+  if (toggle.classList.contains('active')) {
+      // Se activó el botón de exención
+      input.value = '';
+      input.disabled = true;
+  } else {
+      // Se desactivó el botón de exención
+      input.disabled = false;
+  }
+}
+
+function capitalizarNombres(input) {
+  let palabras = input.value.split(' ');
+  for (let i = 0; i < palabras.length; i++) {
+    if (palabras[i].length > 0) {
+      palabras[i] = palabras[i].charAt(0).toUpperCase() + palabras[i].substring(1).toLowerCase();
+    }
+  }
+  input.value = palabras.join(' ');
+}
+
+function validarFormularioPerfil() {
+  const pwd = document.getElementById('input-password-perfil').value;
+  const nombre = document.getElementById('input-nombre-perfil').value;
+
+  const rLength = pwd.length >= 8;
+  const rCase = /[a-z]/.test(pwd) && /[A-Z]/.test(pwd);
+  const rNum = /\d/.test(pwd);
+  const rSpec = /[^a-zA-Z0-9]/.test(pwd);
+
+  toggleRule('rule-length', rLength);
+  toggleRule('rule-case', rCase);
+  toggleRule('rule-num', rNum);
+  toggleRule('rule-spec', rSpec);
+
+  const pwdValid = rLength && rCase && rNum && rSpec;
+  const nombreValid = nombre.trim().length > 0;
+
+  const copyBtn = document.getElementById('wrapper-copy-btn');
+  if (pwdValid) {
+    copyBtn.style.display = 'block';
+  } else {
+    copyBtn.style.display = 'none';
+  }
+
+  const saveBtn = document.getElementById('btn-guardar-perfil');
+  if (pwdValid && nombreValid) {
+    saveBtn.classList.add('active');
+  } else {
+    saveBtn.classList.remove('active');
+  }
+}
+
+function toggleRule(id, isValid) {
+  const el = document.getElementById(id);
+  if (isValid) {
+    el.classList.add('valid');
+  } else {
+    el.classList.remove('valid');
+  }
+}
+
+function copiarAlPortapapeles(texto) {
+  const tempInput = document.createElement("textarea");
+  tempInput.value = texto;
+  tempInput.style.position = "fixed";
+  tempInput.style.opacity = "0";
+  document.body.appendChild(tempInput);
+  tempInput.focus();
+  tempInput.select();
 
   try {
-    var response = UrlFetchApp.fetch(url, options);
-    var json = JSON.parse(response.getContentText());
-    var textoIA = json.candidates[0].content.parts[0].text;
-    
-    // Limpieza de Markdown si la IA pone ```json ... ```
-    textoIA = textoIA.replace(/```json/g, "").replace(/```/g, "").trim();
-    
-    return JSON.parse(textoIA);
-  } catch (e) {
-    return { error: "La IA está durmiendo. Error: " + e.toString() };
+    document.execCommand('copy');
+    animarIconoCopia();
+  } catch (err) {
+    console.error('No se pudo copiar: ', err);
   }
+  document.body.removeChild(tempInput);
 }
 
-// ==========================================
-// 🛠️ HERRAMIENTAS EXTRAS
-// ==========================================
-
-function crearCopiaSeguridad() {
-  var fecha = new Date();
-  var nombreCopia = "Respaldo Contabilidad - " + fecha.toLocaleDateString();
-  
-  // Hace una copia del archivo actual en Drive
-  DriveApp.getFileById(SS.getId()).makeCopy(nombreCopia);
-  
-  return "✅ Copia de seguridad creada en Google Drive.";
+function animarIconoCopia() {
+  const icon = document.getElementById('icono-copiar');
+  icon.classList.add('copied');
+  setTimeout(() => {
+    icon.classList.remove('copied');
+  }, 1000);
 }
 
-function obtenerDatosDashboard() {
-  // Esta función alimentaría los números del Dashboard al cargar
-  // Para la versión 1.0, puedes usarla para traer el total del mes actual
-  
-  // Lógica simplificada de ejemplo
-  return {
-    gastos: 1250,
-    ingresos: 2800,
-    saldo: 1550,
-    ultimosMovimientos: [
-      {fecha: "Hoy", concepto: "Ejemplo", monto: -50}
-    ]
-  };
+function copiarPasswordManual() {
+  const pwdInput = document.getElementById('input-password-perfil');
+  if (!pwdInput.value) return;
+  copiarAlPortapapeles(pwdInput.value);
+}
+
+function generarPassword() {
+  const mayusculas = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  const minusculas = "abcdefghijklmnopqrstuvwxyz";
+  const numeros = "0123456789";
+  const especiales = "!@#$%*&_";
+  const todos = mayusculas + minusculas + numeros + especiales;
+
+  let pwd = "";
+
+  pwd += mayusculas[Math.floor(Math.random() * mayusculas.length)];
+  pwd += minusculas[Math.floor(Math.random() * minusculas.length)];
+  pwd += numeros[Math.floor(Math.random() * numeros.length)];
+  pwd += especiales[Math.floor(Math.random() * especiales.length)];
+
+  for (let i = 0; i < 6; i++) {
+    pwd += todos[Math.floor(Math.random() * todos.length)];
+  }
+
+  pwd = pwd.split('').sort(() => 0.5 - Math.random()).join('');
+
+  document.getElementById('input-password-perfil').value = pwd;
+
+  validarFormularioPerfil();
+  copiarAlPortapapeles(pwd);
+}
+
+// --- Funciones exclusivas del Modal Contrato ---
+
+function toggleDropdownArrendatario(event) {
+  event.stopPropagation();
+  const container = document.getElementById('dropdown-arrendatario-container');
+  container.classList.toggle('open');
+}
+
+document.addEventListener('click', function(event) {
+  const container = document.getElementById('dropdown-arrendatario-container');
+  if (container && container.classList.contains('open') && !container.contains(event.target)) {
+    container.classList.remove('open');
+  }
+});
+
+function transicionCrearPerfil(event) {
+  event.stopPropagation();
+
+  const modalContrato = document.getElementById('modal-contrato');
+  modalContrato.classList.add('transition-no-blur');
+  modalContrato.classList.remove('active');
+
+  const modalPerfil = document.getElementById('modal-perfil');
+  modalPerfil.style.display = 'flex';
+
+  document.getElementById('input-nombre-perfil').value = '';
+  document.getElementById('input-password-perfil').value = '';
+  validarFormularioPerfil();
+
+  setTimeout(() => {
+      modalContrato.style.display = 'none';
+      modalContrato.classList.remove('transition-no-blur');
+      modalPerfil.classList.add('active');
+  }, 300);
+}
+
+function guardarContrato() {
+  const btn = document.getElementById('btn-guardar-contrato');
+  if (btn.classList.contains('active')) {
+    cerrarModalContrato();
+    alert('¡Contrato parametrizado con éxito!');
+  }
 }
