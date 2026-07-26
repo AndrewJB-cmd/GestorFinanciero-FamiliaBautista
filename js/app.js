@@ -10,6 +10,30 @@
 
   const storage = window.FinanceStorage;
 
+  function toSentenceCase(text) {
+    return text
+      .split(' ')
+      .map((word, index) => (index === 0 ? word.charAt(0).toUpperCase() + word.slice(1).toLowerCase() : word.toLowerCase()))
+      .join(' ');
+  }
+
+  function getVistaDisplayName(vistaId) {
+    const labels = {
+      dashboard: 'balance general',
+      'balance-persona': 'balance por persona',
+      arriendo: 'arrendamiento',
+      herramientas: 'herramientas'
+    };
+    return toSentenceCase(labels[vistaId] || vistaId || 'dashboard');
+  }
+
+  function updateHeaderContent(vistaId) {
+    const title = document.getElementById('header-title');
+    const subtitle = document.getElementById('header-subtitle');
+    if (title) title.textContent = 'Hola, Yenny 👋🏻';
+    if (subtitle) subtitle.textContent = `Estas viendo la pestaña ${getVistaDisplayName(vistaId)}`;
+  }
+
   function formatCurrency(value) {
     return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(value);
   }
@@ -240,12 +264,15 @@
 
     if (localStorage.getItem('temaFamilia') === 'light') document.body.classList.add('light-mode');
 
+    updateHeaderContent(state.currentView);
     renderSummary();
     renderMovements();
     initCharts();
   }
 
   function cambiarVista(vistaId, elementoMenu) {
+    state.currentView = vistaId;
+    updateHeaderContent(vistaId);
     ['view-dashboard', 'view-balance-persona', 'view-arriendo', 'view-herramientas'].forEach((id) => {
       const element = document.getElementById(id);
       if (element) element.style.display = 'none';

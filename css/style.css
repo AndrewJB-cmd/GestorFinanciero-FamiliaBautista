@@ -208,6 +208,32 @@ body.light-mode .switch-circle { transform: translateX(20px); background: white;
   width: 100%;
 }
 
+.page-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  padding: 0 0 16px;
+  margin-bottom: 20px;
+  background: linear-gradient(180deg, rgba(10, 10, 10, 0.92) 0%, rgba(10, 10, 10, 0.7) 100%);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-bottom: 1px solid var(--glass-border);
+}
+
+body.light-mode .page-header {
+  background: linear-gradient(180deg, rgba(244, 244, 249, 0.95) 0%, rgba(244, 244, 249, 0.8) 100%);
+}
+
+.header-subtitle {
+  opacity: 0.8;
+  font-size: 0.9rem;
+  margin-top: 4px;
+}
+
+.header-date {
+  text-align: right;
+}
+
 .charts-wrapper {
   grid-column: 1 / -1;
   display: grid;

@@ -561,11 +561,11 @@
         <div class="submenu" id="submenu-resumen" style="display: flex;">
           <div class="submenu-item active" id="btn-sub-general" onclick="cambiarVista('dashboard', this)">
             <i class="fas fa-wallet submenu-icon"></i>
-            <span class="menu-text">Balance General</span>
+            <span class="menu-text">Balance general</span>
           </div>
           <div class="submenu-item" id="btn-sub-persona" onclick="cambiarVista('balance-persona', this)">
             <i class="fas fa-users submenu-icon"></i>
-            <span class="menu-text">Por persona</span>
+            <span class="menu-text">Balance por persona</span>
           </div>
         </div>
       </div>
@@ -597,19 +597,18 @@
 
     <!-- ÁREA PRINCIPAL -->
     <main class="main-content">
+      <div class="section-header page-header">
+        <div>
+          <h2 id="header-title">Hola, Yenny 👋🏻</h2>
+          <p id="header-subtitle" class="header-subtitle">Estas viendo la pestaña balance general</p>
+        </div>
+        <div class="header-date">
+          <div class="date-badge glass" id="fecha-hoy">Cargando fecha...</div>
+        </div>
+      </div>
       
       <!-- ================= 1. VISTA: BALANCE GENERAL ================= -->
       <div id="view-dashboard" class="grid-layout">
-        <div class="section-header">
-          <div>
-            <h2 style="font-size: 1.5rem;">Hola, Yenny 👋</h2>
-            <p style="opacity: 0.8; font-size: 0.9rem;">Balance del Hogar</p>
-          </div>
-          <div style="text-align: right;">
-            <!-- Badge Fecha y Hora Dinámica en Tiempo Real -->
-            <div class="date-badge glass" id="fecha-hoy">Cargando fecha...</div>
-          </div>
-        </div>
 
         <!-- 1. Tarjeta Gastos -->
         <div class="kpi-card glass third-width" style="order: 1; border-color: var(--danger); background: linear-gradient(135deg, rgba(255, 118, 117, 0.2) 0%, rgba(255, 118, 117, 0.02) 100%);">
@@ -722,9 +721,6 @@
 
       <!-- ================= 2. VISTA: BALANCE POR PERSONA ================= -->
       <div id="view-balance-persona" class="grid-layout" style="display: none;">
-        <div class="section-header">
-          <h2>Balance por Persona 👥</h2>
-        </div>
         <div class="glass full-width" style="padding: 20px;">
           <h3 style="color:var(--text-dark); margin-bottom: 10px;">Estado de Cuentas Familiares</h3>
           <p style="color:var(--text-light); font-size: 0.9rem;">
@@ -735,9 +731,6 @@
 
       <!-- ================= 3. VISTA: ARRENDAMIENTO ================= -->
       <div id="view-arriendo" class="grid-layout" style="display: none;">
-        <div class="section-header">
-          <h2>Arrendamiento 🔑</h2>
-        </div>
         <div class="glass quarter-width" style="padding: 20px;">
           <h3>Estado Actual</h3>
           <h1 style="color: var(--success); margin: 15px 0;">AL DÍA</h1>
@@ -746,9 +739,6 @@
 
       <!-- ================= 4. VISTA: HERRAMIENTAS ================= -->
       <div id="view-herramientas" class="grid-layout" style="display: none;">
-        <div class="section-header">
-          <h2>Herramientas 🧰</h2>
-        </div>
         <div class="glass half-width tool-card">
           <h4>Dividir Cuenta</h4>
           <input type="number" id="monto-div" placeholder="Total $" class="tool-input">
