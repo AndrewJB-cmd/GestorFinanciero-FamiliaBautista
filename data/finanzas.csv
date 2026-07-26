@@ -1,0 +1,8 @@
+date,concepto,monto,tipo
+2026-07-01,Salario,2800,ingreso
+2026-07-02,Arriendo Apto,800,ingreso
+2026-07-03,Pago Luz,-120,gasto
+2026-07-04,Mercado,-450,gasto
+2026-07-05,Transporte,-60,gasto
+2026-07-06,Venta extra,150,ingreso
+2026-07-07,Internet,-45,gasto
